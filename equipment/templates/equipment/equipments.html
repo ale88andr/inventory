@@ -22,8 +22,14 @@
                             {% for equipment in equipments %}
                                 <li class="equipment-li">
                                     <div class="col-lg-3">
+                                        {% if equipment.inventory_number %}
 {#                                        <img class="img-responsive img-thumbnail" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>#}
-                                        <h4 class="text-center text-primary"># {{ equipment.inventory_number }}</h4>
+                                            <h4 class="text-center text-primary"># {{ equipment.inventory_number }}</h4>
+                                        {% else %}
+                                            <p class="text-danger text-center">
+                                                Инвентарный номер <br> отсутствует!
+                                            </p>
+                                        {% endif %}
                                     </div>
                                     <div class="col-lg-9">
                                         <div class="timeline-panel">
