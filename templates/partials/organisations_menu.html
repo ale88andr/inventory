@@ -1,0 +1,38 @@
+<li>
+    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Организация<span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level">
+        {% for item in menu %}
+            <li>
+                <a href="{% url 'employees' pk=item.pk %}">
+                    <span class="fa fa-institution"> </span>
+                    {{ item.title }}
+                </a>
+                {% if item.has_subordinates %}
+                    <ul class="nav nav-third-level">
+                        {% for subordinate in item.subordinates %}
+                            <li>
+                                <a href="{% url 'employees' pk=subordinate.pk %}">
+                                    <span class="fa fa-code-fork"> </span>
+                                    {{ subordinate.title }}
+                                </a>
+                                {% if subordinate.has_subordinates %}
+                                    <ul class="nav nav-fourth-level">
+                                        {% for sub in subordinate.subordinates %}
+                                            <li>
+                                                <a href="{% url 'employees' pk=sub.pk %}">
+                                                    <span class="fa fa-building-o"> </span>
+                                                    {{ sub.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %} 
+            </li>
+        {% endfor %}
+    </ul>
+    <!-- /.nav-second-level -->
+</li>
