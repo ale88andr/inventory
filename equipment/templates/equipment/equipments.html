@@ -82,15 +82,21 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        {% include 'equipment/partials/paginate.html' %}
                     </div>
                 <!-- /.panel-body -->
             </div>
             <!-- /.panel -->
+
+            <!-- Pagination -->
+            {% include 'equipment/partials/paginate.html' %}
+            <!-- End Pagination -->
+
         </div>
         <!-- /.col-lg-8 -->
 
-    {% equipment_types_widget %}
+        <!-- Equipments types widget -->
+        {% equipment_types_widget %}
+        <!-- End equipments types widget -->
 
     </div>
 {% endblock %}

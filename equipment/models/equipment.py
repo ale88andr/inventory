@@ -8,6 +8,7 @@ from employee.models.employee import Employee
 
 
 class Equipment(models.Model):
+
     type = models.ForeignKey(
         EquipmentTypes,
         verbose_name='Тип оборудования',
