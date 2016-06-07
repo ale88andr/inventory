@@ -47,7 +47,7 @@ class Employee(models.Model):
 
     @staticmethod
     def all():
-        return Employee.objects.all()
+        return Employee.objects.select_related('organisation', 'department', 'location').all()
 
     def __str__(self):
         return self.short_full_name()

@@ -1,11 +1,8 @@
 import base64
 import qrcode
-
 from io import BytesIO
 from django.utils import timezone
-
 from django.db import models
-
 from equipment.models.equipment_types import EquipmentTypes
 from employee.models.employee import Employee
 
@@ -80,13 +77,15 @@ class Equipment(models.Model):
         date_diff = timezone.now() - self.revised_at
 
         if date_diff.days == 0:
-            return '~ %i ч. назад' % round(date_diff.seconds/3600)
+            return '~ %i ч. назад' % round(date_diff.seconds / 3600)
 
         return '%s дн. назад' % date_diff.days
 
     @staticmethod
     def all():
-        return Equipment.objects.all()
+        return Equipment.objects.select_related(
+            'type', 'responsible__location', 'responsible__department', 'responsible'
+        ).all()
 
     @staticmethod
     def get(entity_id):

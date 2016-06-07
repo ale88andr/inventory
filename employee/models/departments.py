@@ -8,6 +8,10 @@ class Department(models.Model):
     title = models.CharField(_('Наименование'), max_length=100, unique=True, db_index=True)
     organisation = models.ForeignKey(Organisation, verbose_name='Подразделение относится к')
 
+    @staticmethod
+    def all():
+        return Department.objects.select_related('organisation').all()
+
     def __str__(self):
         return self.title
 
