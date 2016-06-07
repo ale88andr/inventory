@@ -8,6 +8,7 @@ class EquipmentsView(ListView):
     paginate_by = 1
     context_object_name = 'equipments'
     template_name = 'equipment/equipments.html'
+    page_title = 'Учтённое оборудование'
 
     def get_queryset(self):
         return Equipment.all()
