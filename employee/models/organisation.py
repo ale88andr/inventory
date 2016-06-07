@@ -4,6 +4,7 @@ from django.db import models
 
 class Organisation(models.Model):
     title = models.CharField(_('Наименование'), max_length=80, unique=True, db_index=True)
+    short_title = models.CharField(_('Краткое наименование'), max_length=40, unique=True, null=True, blank=True)
     parent = models.ForeignKey('Organisation', default=0, blank=True, null=True, verbose_name='В подчинении')
 
     @staticmethod

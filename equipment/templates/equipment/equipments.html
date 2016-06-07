@@ -52,6 +52,23 @@
                                             <div class="timeline-body">
                                                 <p>{{ equipment.note }}</p>
                                             </div>
+                                            <div class="equipment-footer">
+                                                <p class="text-muted">
+                                                    <i class="fa fa-user"></i>
+                                                    Ответственный сотрудник:
+                                                    <span class="text-danger">
+                                                        {{ equipment.responsible.full_name }}
+                                                    </span>
+                                                </p>
+                                                <p class="text-muted">
+                                                    <i class="fa fa-location-arrow"></i>
+                                                    Месторасположение:
+                                                    <span class="text-danger">
+                                                        {{ equipment.responsible.location }}
+                                                        ({{ equipment.responsible.organisation.short_title|default:'' }})
+                                                    </span>
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
