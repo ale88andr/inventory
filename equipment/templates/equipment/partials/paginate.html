@@ -1,17 +1,32 @@
 {% if is_paginated %}
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
-            <li>
-                <span><a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a></span>
-            </li>
-        {% endif %}
-        <li class="">
-            <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.</span>
-        </li>
-        {% if page_obj.has_next %}
-            <li>
-                <span><a href="?page={{ page_obj.next_page_number }}">Следующая</a></span>
-            </li>
-        {% endif %}
-    </ul>
+    <div class="text-center">
+        <p class="text-primary">Всего: {{ page_obj.paginator.num_pages }} страниц(ы)</p>
+        <ul class="pagination pagination-lg">
+            {% if page_obj.has_previous %}
+                <li>
+                    <span><a href="?page={{ page_obj.previous_page_number }}">«</a></span>
+                </li>
+            {% else %}
+                <li class="disabled"><a href="#">«</a></li>
+            {% endif %}
+            {% for page in page_obj.paginator.page_range %}
+                {% if page == page_obj.number %}
+                    <li class="active">
+                        <span>{{ page_obj.number }}</span>
+                    </li>
+                {% else %}
+                    <li>
+                        <span><a href="?page={{ page }}">{{ page }}</a></span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li>
+                    <span><a href="?page={{ page_obj.next_page_number }}">»</a></span>
+                </li>
+            {% else %}
+                <li class="disabled"><a href="#">»</a></li>
+            {% endif %}
+        </ul>
+    </div>
 {% endif %}
