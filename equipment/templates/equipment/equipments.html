@@ -82,11 +82,7 @@
                                     </div>
                                 </li>
                             {% empty %}
-                                <div class="well-sm">
-                                    <p class="text-center text-danger">
-                                        По заданным параметрам данные отсутствуют!
-                                    </p>
-                                </div>
+                                {% include 'equipment/partials/_empty.html' %}
                             {% endfor %}
                         </ul>
                     </div>
