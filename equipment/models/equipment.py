@@ -7,6 +7,12 @@ from equipment.models.equipment_types import EquipmentTypes
 from employee.models.employee import Employee
 
 
+class EquipmentsManager(models.Manager):
+
+    def by_type(self, type_pk):
+        return self.filter(type=type_pk)
+
+
 class Equipment(models.Model):
 
     type = models.ForeignKey(
@@ -100,3 +106,6 @@ class Equipment(models.Model):
         verbose_name_plural = 'Учётные единицы'
         app_label = 'equipment'
         ordering = ['-created_at']
+
+    objects = EquipmentsManager()
+

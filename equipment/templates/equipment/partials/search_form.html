@@ -1,0 +1,17 @@
+<!-- Equipment search form -->
+<div class="container-fluid search" id="search_form">
+    <form method="GET" action="" class="form-inline">
+        {% for field in search_form %}
+            <div class="form-group">
+{#                {% if field.label %}#}
+{#                    <label for="{{ field.id_for_label }}" class="control-label">#}
+{#                        {{ field.label }}:#}
+{#                    </label>#}
+{#                {% endif %}#}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-success" value="Фильтр">
+    </form>
+</div>
+<!-- \ End equipment search form -->

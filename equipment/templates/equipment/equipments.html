@@ -11,6 +11,7 @@
                 Оборудование на баллансе
             </h1>
         </div>
+        {% include 'equipment/partials/search_form.html' %}
         <div class="col-lg-8">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -80,6 +81,12 @@
                                         </div>
                                     </div>
                                 </li>
+                            {% empty %}
+                                <div class="well-sm">
+                                    <p class="text-center text-danger">
+                                        По заданным параметрам данные отсутствуют!
+                                    </p>
+                                </div>
                             {% endfor %}
                         </ul>
                     </div>

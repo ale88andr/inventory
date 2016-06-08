@@ -376,3 +376,7 @@ li.equipment-li {
 .label-serial {
     font-size: 90%;
 }
+
+.search {
+    padding-bottom: 10px;
+}
