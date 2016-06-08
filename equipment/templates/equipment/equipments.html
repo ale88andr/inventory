@@ -10,8 +10,8 @@
                 <i class="fa fa-hdd-o fa-fw"></i>
                 Оборудование на баллансе
             </h1>
+            {% include 'equipment/partials/_filter.html' %}
         </div>
-        {% include 'equipment/partials/_search.html' %}
         <div class="col-lg-8">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -37,6 +37,8 @@
 
         </div>
         <!-- /.col-lg-8 -->
+
+        {% include 'equipment/partials/_search_v2.html' %}
 
         <!-- Equipments types widget -->
         {% equipment_types_widget %}

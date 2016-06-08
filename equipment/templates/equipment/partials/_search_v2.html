@@ -1,0 +1,27 @@
+<div class="col-lg-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="fa fa-filter fa-fw"></i> Фильтры:
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <div class="list-group">
+                <form method="GET" action="" class="form-inline">
+                    {% for field in search_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="control-label">
+                                {{ field.label }}:
+                            </label><br>
+                            {{ field }}
+                            <br>
+                        </div>
+                    {% endfor %}
+                    <!-- /.list-group -->
+                    <input type="submit" class="btn btn-default btn-block" value="Применить фильтр" />
+                </form>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>

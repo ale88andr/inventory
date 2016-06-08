@@ -1,0 +1,17 @@
+<!-- Equipment search form -->
+<div id="search_form">
+    <div class="well">
+        <form method="GET" action="" class="form-inline">
+            <fieldset>
+                <legend><i class="fa fa-filter"></i> Фильтры:</legend>
+                {% for field in filter_form %}
+                    <div class="form-group">
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-success" value="Фильтр">
+            </fieldset>
+        </form>
+    </div>
+</div>
+<!-- \ End equipment search form -->
