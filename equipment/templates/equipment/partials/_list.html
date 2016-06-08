@@ -1,0 +1,62 @@
+<!-- Equipment item -->
+<li class="equipment-li">
+    <div class="col-lg-3">
+        {% if equipment.inventory_number %}
+            {#<img class="img-responsive img-thumbnail" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>#}
+            <h4 class="text-center text-primary"># {{ equipment.inventory_number }}</h4>
+        {% else %}
+            <p class="text-danger text-center">
+                Инвентарный номер <br> отсутствует!
+            </p>
+        {% endif %}
+    </div>
+    <div class="col-lg-9">
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <p>
+                    <small class="text-muted">
+                        <i class="fa fa-plug fa-fw"></i>
+                        {{ equipment.type.value }}
+                    </small>
+                    &nbsp;
+                    <span class="label label-danger label-serial">
+                        S/N: {{ equipment.serial_number }}
+                    </span>
+                <h4 class="timeline-title">
+                {{ equipment.model }}
+            </h4>
+                <p>
+                    <small class="text-muted">
+                        Дата последней ревизии:
+                        <br>
+                        <i class="fa fa-clock-o"></i>
+                        {{ equipment.revised_at }}
+                        ({{ equipment.revised_diff }})
+                    </small>
+                </p>
+                </p>
+            </div>
+            <div class="timeline-body">
+                <p>{{ equipment.note }}</p>
+            </div>
+            <div class="equipment-footer">
+                <p class="text-muted">
+                    <i class="fa fa-user"></i>
+                    Ответственный сотрудник:
+                    <span class="text-danger">
+                        {{ equipment.responsible.full_name }}
+                    </span>
+                </p>
+                <p class="text-muted">
+                    <i class="fa fa-location-arrow"></i>
+                    Месторасположение:
+                    <span class="text-danger">
+                        {{ equipment.responsible.location }}
+                        ({{ equipment.responsible.organisation.short_title|default:'' }})
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</li>
+<!-- /Equipment item -->
