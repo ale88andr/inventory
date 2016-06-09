@@ -1,7 +1,9 @@
 from django.views.generic import TemplateView
-from equipment.models.equipment import Equipment
+from .forms import ReportsForm
 
 
 class ReportsView(TemplateView):
     template_name = 'reports/index.html'
     page_title = 'Отчёты'
+    reports_form = ReportsForm()
+
