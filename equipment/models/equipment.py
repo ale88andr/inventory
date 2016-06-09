@@ -1,6 +1,7 @@
 import base64
 import qrcode
 from io import BytesIO
+from itertools import chain
 from django.utils import timezone
 from django.db import models
 from equipment.models.equipment_types import EquipmentTypes
@@ -97,6 +98,19 @@ class Equipment(models.Model):
     @staticmethod
     def get(entity_id):
         return Equipment.objects.get(id=entity_id)
+
+    @staticmethod
+    def search_ng(text):
+        qs = Equipment.all()
+
+        serial_search = qs.filter(serial_number__icontains=text)
+        model_search = qs.filter(model__icontains=text)
+        inventory_search = ''
+
+        if text is int:
+            inventory_search = qs.filter(inventory_number__in=text)
+
+        return list(chain(serial_search, model_search, inventory_search))
 
     def __str__(self):
         return self.model

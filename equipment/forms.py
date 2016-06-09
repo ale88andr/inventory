@@ -3,7 +3,7 @@ from .models.equipment_types import EquipmentTypes
 from employee.models.employee import Employee
 
 
-class EquipmentSearchForm(forms.Form):
+class EquipmentFilterForm(forms.Form):
 
     blank_choice_type = ((None, '--- Выберите тип ---'),)
     blank_choice_responsible = ((None, '--- Ответственный ---'),)
@@ -48,5 +48,14 @@ class EquipmentSearchForm(forms.Form):
         choices=ON_PAGE,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+
+class EquipmentSearchForm(forms.Form):
+
+    search = forms.CharField(
+        max_length=80,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Модель, серийный или инвентарный номер...'})
     )
 
