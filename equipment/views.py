@@ -35,11 +35,15 @@ class EquipmentsView(ListView):
         else:
             queryset = Equipment.all()
 
-        if self.filter_form.cleaned_data.get('filter_type'):
-            queryset = queryset.filter(type=self.filter_form.cleaned_data.get('filter_type'))
-        if self.filter_form.cleaned_data.get('filter_responsible'):
-            queryset = queryset.filter(responsible=self.filter_form.cleaned_data.get('filter_responsible'))
-        if self.filter_form.cleaned_data.get('sort_by'):
-            queryset = queryset.order_by(self.filter_form.cleaned_data.get('sort_by'))
+        type_id = self.filter_form.cleaned_data.get('filter_type')
+        responsible_id = self.filter_form.cleaned_data.get('filter_responsible')
+        sort_by_item = self.filter_form.cleaned_data.get('sort_by')
+
+        if type_id:
+            queryset = queryset.filter(type=type_id)
+        if responsible_id:
+            queryset = queryset.filter(responsible=responsible_id)
+        if sort_by_item:
+            queryset = queryset.order_by(sort_by_item)
 
         return queryset
