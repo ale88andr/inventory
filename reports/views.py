@@ -10,6 +10,6 @@ class ReportsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.GET.get('report_type') == 'summary':
-            return Report(report_name='Суммарный отчёт', filename='sr').summary_report()
+            return Report(report_name='Сводный отчёт', filename='statistic-report').summary_report()
 
         return super(ReportsView, self).get(request, *args, **kwargs)

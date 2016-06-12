@@ -1,7 +1,8 @@
-from datetime import date
+from datetime import date, datetime
 import xlwt
 from django.db.models import Count
 from django.http import HttpResponse
+from django.utils import timezone
 from equipment.models.equipment import Equipment
 from equipment.models.equipment_types import EquipmentTypes
 
@@ -9,6 +10,14 @@ from equipment.models.equipment_types import EquipmentTypes
 class Report:
 
     encoding = 'utf-8'
+    content_type = 'application/vnd.ms-excel'
+    password = '123'
+
+    std_font = xlwt.Font()
+    std_font.name = ''
+    std_font.bold = True
+    std_font.height = 140
+
 
     header_bold = xlwt.easyxf("font: bold on, height 200; pattern: pattern solid, fore_colour ice_blue; align: horiz center")
     header_style = xlwt.easyxf("font: bold on, height 160; pattern: pattern solid, fore_colour ice_blue; align: horiz center")
@@ -16,19 +25,40 @@ class Report:
     group_style_l = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour sea_green; align: horiz left")
 
     def __init__(self, filename, report_name):
-        self.queryset = EquipmentTypes.objects.all().annotate(types_count=Count('equipment'))
-        self.response = HttpResponse(content_type='application/ms-excel')
-        self.response['Content-Disposition'] = 'attachment; filename=%s.xls' % filename
+        self.get_queryset()
+        self.response = HttpResponse(content_type=self.content_type)
+        self.response['Content-Disposition'] = 'attachment; filename=%s_%s.xls' % (filename, Report.get_datetime())
         self.report_name = report_name
+        self.workbook = xlwt.Workbook(encoding=self.encoding)
+
+    @staticmethod
+    def get_datetime():
+        return datetime.today().strftime('%Y-%m-%d_%H%M%S')
+
+    def get_queryset(self):
+        self.queryset = EquipmentTypes.objects.all().annotate(types_count=Count('equipment'))
+
+    def set_protection(self, sheet):
+        if isinstance(sheet, xlwt.Worksheet):
+            sheet.protect = True
+            sheet.wnd_protect = True
+            sheet.obj_protect = True
+            sheet.scen_protect = True
+            sheet.password = self.password
+        else:
+            raise Exception('Can\'t set sheet protection')
+
+        self.workbook.protect = True
+        self.workbook.wnd_protect = True
+        self.workbook.obj_protect = True
 
     def summary_report(self):
 
-        workbook = xlwt.Workbook(encoding=self.encoding)
-        sheet = workbook.add_sheet(self.report_name, cell_overwrite_ok=True)
+        sheet = self.workbook.add_sheet(self.report_name, cell_overwrite_ok=True)
 
-        row_num = 0
+        row_num = 1
         sheet.write_merge(
-            row_num, row_num, 0, 5,
+            row_num, row_num, 0, 6,
             'Сводный отчёт по инвентаризации оборудования, находящегося на баллансе ОПФ РФ в Ленинском районе г. Севастополя',
             self.header_bold
         )
@@ -44,6 +74,7 @@ class Report:
             ('Модель оборудования', 12000),
             ('Месторасположение', 5000),
             ('Ответственный', 5000),
+            ('Ревизия', 3000),
         ]
 
         for column_number in range(len(columns)):
@@ -60,7 +91,8 @@ class Report:
                     equipment.type.value,
                     equipment.model,
                     equipment.responsible.location.emplacement,
-                    equipment.responsible.short_full_name()
+                    equipment.responsible.short_full_name(),
+                    datetime.strftime(equipment.revised_at, '%d/%m/%Y')
                 ]
 
                 for column_number in range(len(row)):
@@ -71,5 +103,6 @@ class Report:
                 sheet.write(row_num, 4, obj.value, self.group_style_l)
                 sheet.write(row_num, 5, obj.types_count, self.group_style)
 
-        workbook.save(self.response)
+        self.set_protection(sheet)
+        self.workbook.save(self.response)
         return self.response
