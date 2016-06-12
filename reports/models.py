@@ -11,7 +11,7 @@ class Report:
 
     encoding = 'utf-8'
     content_type = 'application/vnd.ms-excel'
-    password = '123'
+    sheet_password = '123'
 
     std_font = xlwt.Font()
     std_font.name = ''
@@ -19,10 +19,10 @@ class Report:
     std_font.height = 140
 
 
-    header_bold = xlwt.easyxf("font: bold on, height 200; pattern: pattern solid, fore_colour ice_blue; align: horiz center")
+    header_bold = xlwt.easyxf("font: bold on, height 200; pattern: pattern solid, fore_colour ice_blue; align: horiz center, vert center")
     header_style = xlwt.easyxf("font: bold on, height 160; pattern: pattern solid, fore_colour ice_blue; align: horiz center")
-    group_style = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour sea_green; align: horiz right")
-    group_style_l = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour sea_green; align: horiz left")
+    group_style = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour ice_blue; align: horiz right")
+    group_style_l = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour ice_blue; align: horiz left")
 
     def __init__(self, filename, report_name):
         self.get_queryset()
@@ -44,7 +44,7 @@ class Report:
             sheet.wnd_protect = True
             sheet.obj_protect = True
             sheet.scen_protect = True
-            sheet.password = self.password
+            sheet.password = self.sheet_password
         else:
             raise Exception('Can\'t set sheet protection')
 
@@ -58,13 +58,13 @@ class Report:
 
         row_num = 1
         sheet.write_merge(
-            row_num, row_num, 0, 6,
+            row_num-1, row_num, 0, 6,
             'Сводный отчёт по инвентаризации оборудования, находящегося на баллансе ОПФ РФ в Ленинском районе г. Севастополя',
             self.header_bold
         )
 
         row_num += 2
-        sheet.write_merge(row_num, row_num, 0, 2, 'На дату %s' % (date.today().strftime('%Y-%m-%d')))
+        sheet.write_merge(row_num, row_num, 0, 1, 'На дату: %s' % (date.today().strftime('%Y-%m-%d')))
         row_num += 2
 
         columns = [
@@ -86,22 +86,24 @@ class Report:
 
             for equipment in obj.equipment_set.all():
                 row = [
-                    equipment.inventory_number,
+                    equipment.inventory_number if equipment.inventory_number else 'Отсутствует',
                     equipment.serial_number,
                     equipment.type.value,
                     equipment.model,
                     equipment.responsible.location.emplacement,
                     equipment.responsible.short_full_name(),
-                    datetime.strftime(equipment.revised_at, '%d/%m/%Y')
+                    datetime.strftime(equipment.revised_at, '%d.%m.%Y')
                 ]
 
                 for column_number in range(len(row)):
                     sheet.write(row_num, column_number, row[column_number])
 
                 row_num += 1
-                sheet.write(row_num, 3, 'Всего по типу:', self.group_style)
-                sheet.write(row_num, 4, obj.value, self.group_style_l)
-                sheet.write(row_num, 5, obj.types_count, self.group_style)
+
+            if obj.types_count is not 0:
+                sheet.write_merge(row_num, row_num, 0, 6, 'Тип оборудования %s, всего: %s' % (obj.value, obj.types_count), self.group_style)
+            else:
+                row_num -= 1
 
         self.set_protection(sheet)
         self.workbook.save(self.response)
