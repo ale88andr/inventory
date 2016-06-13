@@ -64,7 +64,7 @@ class Equipment(models.Model):
         help_text='Дата проведения последней ревизии'
     )
 
-    def generate_qrcode(self):
+    def generate_qrcode(self, pdf=False):
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -78,6 +78,9 @@ class Equipment(models.Model):
 
         buffer = BytesIO()
         img.save(buffer, 'PNG')
+
+        if pdf:
+            return buffer
 
         return base64.b64encode(buffer.getvalue())
 

@@ -1,0 +1,5 @@
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="pdf" value="{{ equipment.id }}">
+    <input class="btn btn-danger pull-right" type="submit" value="Стикер">
+</form>
