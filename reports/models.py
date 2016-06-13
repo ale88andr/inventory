@@ -2,7 +2,6 @@ from datetime import date, datetime
 import xlwt
 from django.db.models import Count
 from django.http import HttpResponse
-from django.utils import timezone
 from equipment.models.equipment import Equipment
 from equipment.models.equipment_types import EquipmentTypes
 
@@ -13,16 +12,26 @@ class Report:
     content_type = 'application/vnd.ms-excel'
     sheet_password = '123'
 
-    std_font = xlwt.Font()
-    std_font.name = ''
-    std_font.bold = True
-    std_font.height = 140
-
-
-    header_bold = xlwt.easyxf("font: bold on, height 200; pattern: pattern solid, fore_colour ice_blue; align: horiz center, vert center")
-    header_style = xlwt.easyxf("font: bold on, height 160; pattern: pattern solid, fore_colour ice_blue; align: horiz center")
-    group_style = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour ice_blue; align: horiz right")
-    group_style_l = xlwt.easyxf("font: bold True; pattern: pattern solid, fore_colour ice_blue; align: horiz left")
+    header_bold = xlwt.easyxf('''
+        font: bold on, height 200;
+        pattern: pattern solid, fore_colour ice_blue;
+        align: horiz center, vert center
+    ''')
+    header_style = xlwt.easyxf('''
+        font: bold on, height 160;
+        pattern: pattern solid, fore_colour ice_blue;
+        align: horiz center
+    ''')
+    group_style = xlwt.easyxf('''
+        font: bold True;
+        pattern: pattern solid, fore_colour ice_blue;
+        align: horiz right
+    ''')
+    group_style_l = xlwt.easyxf('''
+        font: bold True;
+        pattern: pattern solid, fore_colour ice_blue;
+        align: horiz left
+    ''')
 
     def __init__(self, filename, report_name):
         self.get_queryset()
@@ -81,6 +90,8 @@ class Report:
             sheet.write(row_num, column_number, columns[column_number][0], self.header_style)
             sheet.col(column_number).width = columns[column_number][1]
 
+        all_counter = 0
+
         for obj in self.queryset:
             row_num += 1
 
@@ -95,6 +106,8 @@ class Report:
                     datetime.strftime(equipment.revised_at, '%d.%m.%Y')
                 ]
 
+                all_counter += 1
+
                 for column_number in range(len(row)):
                     sheet.write(row_num, column_number, row[column_number])
 
@@ -104,6 +117,9 @@ class Report:
                 sheet.write_merge(row_num, row_num, 0, 6, 'Тип оборудования %s, всего: %s' % (obj.value, obj.types_count), self.group_style)
             else:
                 row_num -= 1
+
+        row_num += 2
+        sheet.write_merge(row_num, row_num, 0, 6, 'Всего учтенного оборудования: %s единиц' % all_counter, self.group_style)
 
         self.set_protection(sheet)
         self.workbook.save(self.response)
