@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.db import models
 
@@ -45,9 +46,16 @@ class Employee(models.Model):
     def short_full_name(self):
         return '%s %s. %s.' % (self.surname, self.firstname[:1], self.middlename[:1])
 
+    def info(self):
+        return '%s(%s, %s)' % (self.full_name(), self.organisation.title, self.location.emplacement)
+
     @staticmethod
     def all():
         return Employee.objects.select_related('organisation', 'department', 'location').all()
+
+    @staticmethod
+    def get(pk):
+        return get_object_or_404(Employee, pk=pk)
 
     def __str__(self):
         return self.short_full_name()
@@ -57,4 +65,3 @@ class Employee(models.Model):
         verbose_name_plural = _('Сотрудники')
         ordering = ['id']
         app_label = 'employee'
-

@@ -42,7 +42,7 @@
                             {% for employee in view.employees %}
                                 <tr>
                                     <td>{{ employee.id }}</td>
-                                    <td>{{ employee.short_full_name }}</td>
+                                    <td><a href="{% url 'employee' employee.id %}">{{ employee.short_full_name }}</a></td>
                                     <td>{{ employee.get_position_display }}</td>
                                     <td>{{ employee.department.title|default:'-----' }}</td>
                                     <td>{{ employee.get_state_display }}</td>

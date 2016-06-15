@@ -1,8 +1,9 @@
 from django.conf.urls import url
 
-from employee.views import Dashboard, EmployeesView
+from employee.views import Dashboard, EmployeesView, EmployeeView
 
 urlpatterns = (
     url(r'^v1/$', Dashboard.as_view(), name='dashboard'),
-    url(r'^(?P<pk>\d+)/employees/$', EmployeesView.as_view(), name='employees')
+    url(r'^(?P<pk>\d+)/employees/$', EmployeesView.as_view(), name='employees'),
+    url(r'^employee/(?P<employee_pk>\d+)$', EmployeeView.as_view(), name='employee')
 )

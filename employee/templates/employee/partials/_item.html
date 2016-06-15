@@ -1,0 +1,100 @@
+<div class="panel panel-info" xmlns="http://www.w3.org/1999/html">
+    <div class="panel-heading">
+        Бланк инвентаризации сотрудника: <b>{{ view.employee.short_full_name }}</b>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-2 text-muted">
+                Организация:
+            </div>
+            <div class="col-lg-10 text-primary">
+                <b>{{ view.employee.organisation.title }}</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 text-muted">
+                Отдел:
+            </div>
+            <div class="col-lg-10 text-primary">
+                <b>{{ view.employee.department.title|default:'-----' }}</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 text-muted">
+                Должность:
+            </div>
+            <div class="col-lg-10 text-primary">
+                <b>{{ view.employee.get_position_display }}</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 text-muted">
+                Сотрудник:
+            </div>
+            <div class="col-lg-10 text-primary">
+                <b>{{ view.employee.full_name }}</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 text-muted">
+                Расположение:
+            </div>
+            <div class="col-lg-10 text-primary">
+                <b>{{ view.employee.location.emplacement }}</b>
+            </div>
+        </div>
+        <br>
+
+        <h4 class="text-center text-muted page-header top-20">Список оборудования закрепленного за сотрудником:</h4>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="success">#</th>
+                    <th class="text-primary"><b>Инв. номер</b></th>
+                    <th class="warning">Тип</th>
+                    <th>Модель</th>
+                    <th>Серийный номер</th>
+                    <th>Дата ревизии</th>
+                    <th>Примечание</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for equipment in view.employee_equipments %}
+                <tr>
+                    <td class="success">{{ forloop.counter }}</td>
+                    <td class="{% if equipment.inventory_number %}text-primary{% else %}text-danger{% endif %}">
+                        <b>{{ equipment.inventory_number|default:'Не имеет!' }}</b>
+                    </td>
+                    <td class="warning">
+                        {{ equipment.type.value }}
+                    </td>
+                    <td>
+                        {{ equipment.model }}
+                    </td>
+                    <td class="text-danger">
+                        <b>{{ equipment.serial_number|default:'-----' }}</b>
+                    </td>
+                    <td>
+                        <i class="fa fa-clock-o"></i>
+                        {{ equipment.revised_at }}
+                    </td>
+                    <td class="text-muted">
+                        {{ equipment.note }}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-danger text-center"><b>Нет данных!</b></td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="panel-footer">
+        Всего закрепленно за сотрудником учётных единиц: <span class="badge">{{ view.employee_equipments.count }}</span>
+    </div>
+</div>

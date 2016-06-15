@@ -40,3 +40,16 @@ class EmployeesView(TemplateView):
 
     def employees_organisation(self):
         return self.organisation
+
+
+class EmployeeView(TemplateView):
+    template_name = 'employee/show.html'
+    page_title = 'Рабочее место: '
+
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('employee_pk'):
+            self.employee = Employee.get(kwargs.get('employee_pk'))
+            self.page_title += self.employee.info()
+            self.employee_equipments = self.employee.equipment_set.all()
+
+        return super(EmployeeView, self).get(request, *args, **kwargs)
