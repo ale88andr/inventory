@@ -57,6 +57,7 @@
                     <th>Модель</th>
                     <th>Серийный номер</th>
                     <th>Дата ревизии</th>
+                    <th>Стикер</th>
                     <th>Примечание</th>
                 </tr>
             </thead>
@@ -80,6 +81,9 @@
                     <td>
                         <i class="fa fa-clock-o"></i>
                         {{ equipment.revised_at }}
+                    </td>
+                    <td>
+                        {% include 'equipment/partials/_sticker_link.html' %}
                     </td>
                     <td class="text-muted">
                         {{ equipment.note }}

@@ -1,0 +1,5 @@
+<form action="{% url 'equipments' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="pdf" value="{{ equipment.id }}">
+    <button class="btn-link" type="submit"><i class="fa fa-qrcode fa-fw"></i></button>
+</form>
