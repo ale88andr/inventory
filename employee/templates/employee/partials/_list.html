@@ -26,28 +26,38 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped">
+                    <table class="table table-hover table-striped">
                         <thead>
                             <tr>
-                                <th># id</th>
-                                <th>Фио</th>
+                                <th class="success">#РМ</th>
+                                <th><b>Сотрудник</b></th>
                                 <th>Должность</th>
                                 <th>Подразделение</th>
                                 <th>Состояние</th>
-                                <th>Расположение</th>
+                                <th class="danger">Расположение</th>
                                 <th class="warning">Кол-во оборудования</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for employee in view.employees %}
                                 <tr>
-                                    <td>{{ employee.id }}</td>
-                                    <td><a href="{% url 'employee' employee.id %}">{{ employee.short_full_name }}</a></td>
+                                    <td class="success">
+                                        {{ employee.id }}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'employee' employee.id %}">
+                                            <b>{{ employee.short_full_name }}</b>
+                                        </a>
+                                    </td>
                                     <td>{{ employee.get_position_display }}</td>
                                     <td>{{ employee.department.title|default:'-----' }}</td>
                                     <td>{{ employee.get_state_display }}</td>
-                                    <td>{{ employee.location.emplacement }}</td>
-                                    <td class="warning">{{ employee.equipment_set.count }}</td>
+                                    <td class="danger">
+                                        {{ employee.location.emplacement }}
+                                    </td>
+                                    <td class="warning">
+                                        <b>{{ employee.equipment_set.count }} ед.</b>
+                                    </td>
                                 </tr>
                             {% empty %}
                                 <td colspan="7">

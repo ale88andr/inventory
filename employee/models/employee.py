@@ -1,14 +1,12 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.db import models
-
 from employee.models.organisation import Organisation
 from employee.models.location import Location
 from employee.models.departments import Department
 
 
 class Employee(models.Model):
-
     STATES = [
         [True, _('Работает')],
         [False, _('Уволен')]
@@ -47,7 +45,9 @@ class Employee(models.Model):
         return '%s %s. %s.' % (self.surname, self.firstname[:1], self.middlename[:1])
 
     def info(self):
-        return '%s(%s, %s)' % (self.full_name(), self.organisation.title, self.location.emplacement)
+        return '%s(%s, %s)' % (
+            self.full_name(), self.organisation.title, (self.location.emplacement if self.location else '')
+        )
 
     @staticmethod
     def all():
