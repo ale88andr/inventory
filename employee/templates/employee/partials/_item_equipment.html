@@ -1,0 +1,25 @@
+<tr>
+    <td class="success">{{ forloop.counter }}</td>
+    <td class="{% if equipment.inventory_number %}text-primary{% else %}text-danger{% endif %}">
+        <b>{{ equipment.inventory_number|default:'Не имеет!' }}</b>
+    </td>
+    <td class="warning">
+        {{ equipment.type.value }}
+    </td>
+    <td>
+        {{ equipment.model }}
+    </td>
+    <td class="text-danger">
+        <b>{{ equipment.serial_number|default:'-----' }}</b>
+    </td>
+    <td>
+        <i class="fa fa-clock-o"></i>
+        {{ equipment.revised_at }}
+    </td>
+    <td>
+        {% include 'equipment/partials/_sticker_link.html' %}
+    </td>
+    <td class="text-muted">
+        {{ equipment.note }}
+    </td>
+</tr>
