@@ -1,24 +1,22 @@
-<div class="col-lg-4">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="fa fa-pie-chart fa-fw"></i> Типы оборудования
-        </div>
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-            <div class="list-group">
-                {% for type in equipment_types %}
-                    <a href="#" class="list-group-item">
-                        <i class="fa fa-plug fa-fw"></i> {{ type.value }}
-                        <span class="pull-right text-muted small">
-                            <em>{{ type.types_count }}</em>
-                        </span>
-                    </a>
-                {% endfor %}
-                <!-- /.list-group -->
-                <a href="#" class="btn btn-default btn-block">Показать подробности</a>
-            </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="fa fa-pie-chart fa-fw"></i> Типы оборудования
     </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="list-group">
+            {% for type in equipment_types %}
+                <a href="#" class="list-group-item">
+                    <i class="fa fa-plug fa-fw"></i> {{ type.value }}
+                    <span class="pull-right text-muted small">
+                        <em>{{ type.types_count }}</em>
+                    </span>
+                </a>
+            {% endfor %}
+            <!-- /.list-group -->
+            <a href="{% url 'equipments_types' %}" class="btn btn-default btn-block">Показать подробности</a>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
 </div>

@@ -1,10 +1,9 @@
 from io import BytesIO
-
 from django.http import HttpResponse
-from django.views.generic import ListView
-
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, TemplateView, DetailView
 from equipment.models.pdf_print import PdfPrint
-from .models import Equipment
+from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm
 
 
@@ -12,7 +11,7 @@ class EquipmentsView(ListView):
     model = Equipment
     paginate_by = 10
     context_object_name = 'equipments'
-    template_name = 'equipment/equipments.html'
+    template_name = 'equipment/list.html'
     page_title = 'Учтённое оборудование'
 
     def dispatch(self, request, *args, **kwargs):
@@ -70,3 +69,28 @@ class EquipmentsView(ListView):
         )
         response.write(pdf)
         return response
+
+
+class EquipmentTypesView(TemplateView):
+    template_name = 'equipment/types.html'
+    page_title = 'Типы оборудования'
+    type_set_annotation = EquipmentTypes.annotation.all()
+
+
+class DetailTypeView(DetailView):
+    template_name = 'equipment/type.html'
+    page_title = 'Оборудование: '
+    context_object_name = 'type'
+    queryset = EquipmentTypes.equipments.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailTypeView, self).get_context_data(**kwargs)
+        self.page_title += self.object.value
+        context['equipments_type_count'] = str(self.object.equipment_set.count())
+        context['equipments'] = self.object.equipment_set.all
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if 'xls' in request.GET:
+            pass
+        return super(DetailTypeView, self).get(request, *args, **kwargs)

@@ -27,7 +27,11 @@ LOCAL_APPS = [
     'reports',
 ]
 
-INSTALLED_APPS = DJANGO_APP + LOCAL_APPS
+DJANGO_PACKAGES = [
+    'debug_toolbar'
+]
+
+INSTALLED_APPS = DJANGO_APP + LOCAL_APPS + DJANGO_PACKAGES
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,0 +1,15 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.page_title }} ({{ equipments_type_count }}){% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h3 class="page-header text-muted">
+            <i class="fa fa-laptop fa-fw"></i>
+            {{ view.page_title }} <span class="badge">{{ equipments_type_count }}</span>
+        </h3>
+        <!-- equipment type list table -->
+        {% include 'equipment/partials/_type_list.html' %}
+        <!-- \equipment type list table -->
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.page_title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h2 class="page-header text-muted">
+            <i class="fa fa-plug fa-fw"></i>
+            {{ view.page_title }}
+        </h2>
+        <div class="col-lg-4">
+            <div class="list-group">
+                {% for type in view.type_set_annotation %}
+                    <a href="{% url 'equipment_type' type.id %}" class="list-group-item">
+                        {{ type.value }}
+                        <span class="pull-right text-danger">
+                            Всего: <b>{{ type.types_count }}</b>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+            <!-- /.list-group -->
+        </div>
+    </div>
+{% endblock %}

@@ -2,7 +2,7 @@
 <li class="equipment-li">
     <div class="col-lg-3">
         {% if equipment.inventory_number %}
-{#            <img class="img-responsive img-thumbnail" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>#}
+            <img class="img-responsive img-thumbnail" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>
             <h4 class="text-center text-primary"><b># {{ equipment.inventory_number }}</b></h4>
         {% else %}
             <p class="text-danger text-center">
