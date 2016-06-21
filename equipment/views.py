@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from equipment.models.pdf_print import PdfPrint
+from reports.models import XLS
 from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm
 
@@ -92,5 +93,20 @@ class DetailTypeView(DetailView):
 
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
-            pass
+            return self._render_type_report(kwargs.get('pk'))
         return super(DetailTypeView, self).get(request, *args, **kwargs)
+
+    @staticmethod
+    def _render_type_report(type_pk):
+        type_object = get_object_or_404(EquipmentTypes, pk=type_pk)
+        equipments_set = type_object.equipment_set.all().select_related('responsible', 'responsible__location')
+        columns = (
+            {'repr': 'Модель оборудования', 'property': 'model', 'size': 12000},
+            {'repr': 'Серийный №', 'property': 'serial_number', 'size': 4000},
+            {'repr': 'Инвентарный №', 'property': 'inventory_number', 'size': 4000},
+            {'repr': 'Расположение', 'property': 'responsible.location', 'size': 4000},
+            {'repr': 'Ответственный', 'property': 'responsible', 'size': 5000}
+        )
+        xls = XLS(sheet_name=type_object.value)
+        xls.sheet_header = 'Оборудование %s находящееся на баллансе' % type_object.value
+        return xls.render(queryset=equipments_set, columns=columns)

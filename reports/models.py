@@ -7,7 +7,6 @@ from equipment.models.equipment_types import EquipmentTypes
 
 
 class Report:
-
     encoding = 'utf-8'
     content_type = 'application/vnd.ms-excel'
     sheet_password = '123'
@@ -67,7 +66,7 @@ class Report:
 
         row_num = 1
         sheet.write_merge(
-            row_num-1, row_num, 0, 6,
+            row_num - 1, row_num, 0, 6,
             'Сводный отчёт по инвентаризации оборудования, находящегося на баллансе ОПФ РФ в Ленинском районе г. Севастополя',
             self.header_bold
         )
@@ -114,13 +113,160 @@ class Report:
                 row_num += 1
 
             if obj.types_count is not 0:
-                sheet.write_merge(row_num, row_num, 0, 6, 'Тип оборудования %s, всего: %s' % (obj.value, obj.types_count), self.group_style)
+                sheet.write_merge(row_num, row_num, 0, 6,
+                                  'Тип оборудования %s, всего: %s' % (obj.value, obj.types_count), self.group_style)
             else:
                 row_num -= 1
 
         row_num += 2
-        sheet.write_merge(row_num, row_num, 0, 6, 'Всего учтенного оборудования: %s единиц' % all_counter, self.group_style)
+        sheet.write_merge(row_num, row_num, 0, 6, 'Всего учтенного оборудования: %s единиц' % all_counter,
+                          self.group_style)
 
         self.set_protection(sheet)
         self.workbook.save(self.response)
         return self.response
+
+
+class XLS:
+    ENCODING = 'utf-8'
+    CONTENT_TYPE = 'application/vnd.ms-excel'
+    INCREMENT_VALUE = 1
+    SHEET_PASSWORD = '123'
+
+    _row = 0
+
+    sheet_header = ''
+    sheet_name = 'Report'
+
+    header_style = xlwt.easyxf('''
+        font: bold on, height 200;
+        pattern: pattern solid, fore_colour ice_blue;
+        align: horiz center, vert center
+    ''')
+    date_style = xlwt.easyxf('''
+        font: height 180, italic True;
+        pattern: pattern solid, fore_colour white;
+        alignment: horiz right, vert centre, wrap on;
+        border: bottom thin, top thin;
+    ''')
+    dots_style = xlwt.easyxf('''
+        pattern: pattern fine_dots;
+    ''')
+    columns_style = xlwt.easyxf('''
+        alignment: horiz centre, vert centre, wrap on;
+        font: bold on, height 200;
+    ''')
+    text_style = xlwt.easyxf('''
+        alignment: vert centre, wrap on;
+        font: height 140, color gray25;
+    ''')
+    no_value_style = xlwt.easyxf('''
+        alignment: horz center, vert centre, wrap on;
+        font: color red, bold True;
+    ''')
+    all_style = xlwt.easyxf('''
+        alignment: horz right, vert centre, wrap on;
+        font: bold True, height 220;
+    ''')
+
+    def __init__(self, sheet_name=''):
+        self._response = XLS.get_response()
+        self._workbook = xlwt.Workbook(encoding=XLS.ENCODING)
+        self.sheet_name = sheet_name
+
+    @staticmethod
+    def get_response():
+        response = HttpResponse(content_type=XLS.CONTENT_TYPE)
+        response['Content-Disposition'] = 'attachment; filename=report_%s.xls' % XLS.get_datetime()
+        return response
+
+    @staticmethod
+    def get_datetime(time=True):
+        if time is False:
+            return datetime.today().strftime('%Y-%m-%d')
+        return datetime.today().strftime('%Y-%m-%d_%H%M%S')
+
+    def set_protection(self):
+        self._sheet.protect = True
+        self._sheet.wnd_protect = True
+        self._sheet.obj_protect = True
+        self._sheet.scen_protect = True
+        self._sheet.password = self.SHEET_PASSWORD
+
+        self._workbook.protect = True
+        self._workbook.wnd_protect = True
+        self._workbook.obj_protect = True
+
+    def increment_row(self, increment_value=INCREMENT_VALUE):
+        self._row += increment_value
+        return self._row
+
+    def _create_sheet(self, cell_overwrite=False):
+        self._sheet = self._workbook.add_sheet(self.sheet_name, cell_overwrite_ok=cell_overwrite)
+
+    def add_merge_row(self, row_start, row_end, column_start, column_end, value='', style=None):
+        self._sheet.write_merge(row_start, row_end, column_start, column_end, value, style)
+        self._row += (row_end - row_start) + 1
+
+    def render(self, queryset=None, columns=None):
+        if not columns:
+            columns = []
+        self._create_sheet()
+
+        # header row
+        if self.sheet_header is not None:
+            self.add_merge_row(self._row, self._row + 1, 0, len(columns) - 1, self.sheet_header,
+                               self.header_style)
+
+        # date row
+        self.add_merge_row(self._row, self._row + 3, 0, len(columns) - 1, 'На дату: %s' % self.get_datetime(time=False),
+                           style=self.date_style)
+
+        # column names
+        for index, column in enumerate(columns):
+            self._sheet.write(self._row, index, column['repr'], self.columns_style)
+
+            if 'size' in column:
+                self._sheet.col(index).width = column['size']
+
+        type_counter = 0
+        # columns data
+        for entity in queryset:
+            self.increment_row()
+            type_counter += 1
+
+            row = []
+
+            for column in columns:
+                row.append(self.get_repr(self.get_field(entity, column['property'])))
+
+            for column_number in range(len(row)):
+                if row[column_number] is None:
+                    self._sheet.write(self._row, column_number, 'Отсутствует', self.no_value_style)
+                else:
+                    self._sheet.write(self._row, column_number, str(row[column_number]))
+
+        self.increment_row()
+        self.add_merge_row(self._row, self._row, 0, len(columns) - 1, '', self.dots_style)
+        self.add_merge_row(self._row, self._row, 0, len(columns) - 1, 'Всего: %s ед.' % type_counter, self.all_style)
+
+        self.set_protection()
+        self._workbook.save(self._response)
+        return self._response
+
+    @staticmethod
+    def get_repr(value):
+        if callable(value):
+            return '%s' % value()
+        return value
+
+    @staticmethod
+    def get_field(instance, field):
+        field_path = field.split('.')
+        attr = instance
+        for elem in field_path:
+            try:
+                attr = getattr(attr, elem)
+            except AttributeError:
+                raise Exception('Wrong model or relation column attribute "%s"' % field)
+        return attr
