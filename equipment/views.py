@@ -2,6 +2,8 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
+
+from employee.models import Location
 from equipment.models.pdf_print import PdfPrint
 from reports.models import XLS
 from .models import Equipment, EquipmentTypes
@@ -109,4 +111,44 @@ class DetailTypeView(DetailView):
         )
         xls = XLS(sheet_name=type_object.value)
         xls.sheet_header = 'Оборудование %s находящееся на баллансе' % type_object.value
+        return xls.render(queryset=equipments_set, columns=columns)
+
+
+class EquipmentLocationsView(TemplateView):
+    template_name = 'equipment/locations.html'
+    page_title = 'Расположение оборудования'
+    locations_set = Location.annotation.all()
+
+
+class DetailLocationView(DetailView):
+    template_name = 'equipment/location.html'
+    page_title = 'Месторасположение: '
+    context_object_name = 'location'
+    queryset = Location.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailLocationView, self).get_context_data(**kwargs)
+        self.page_title += self.object.emplacement
+        context['equipments'] = Equipment.objects.filter(responsible__location_id=self.object.pk)
+        context['equipments_location_count'] = str(context['equipments'].count())
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if 'xls' in request.GET:
+            return self._render_type_report(kwargs.get('pk'))
+        return super(DetailLocationView, self).get(request, *args, **kwargs)
+
+    @staticmethod
+    def _render_type_report(location_pk):
+        location = Location.objects.get(pk=location_pk)
+        equipments_set = Equipment.objects.filter(responsible__location_id=location_pk)
+        columns = (
+            {'repr': 'Тип оборудования', 'property': 'type.value', 'size': 6000},
+            {'repr': 'Модель оборудования', 'property': 'model', 'size': 12000},
+            {'repr': 'Серийный №', 'property': 'serial_number', 'size': 4000},
+            {'repr': 'Инвентарный №', 'property': 'inventory_number', 'size': 4000},
+            {'repr': 'Ответственный', 'property': 'responsible', 'size': 5000}
+        )
+        xls = XLS(sheet_name=location.emplacement)
+        xls.sheet_header = 'Оборудование %s находящееся на баллансе' % location.emplacement
         return xls.render(queryset=equipments_set, columns=columns)

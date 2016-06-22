@@ -1,0 +1,25 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.page_title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h2 class="page-header text-muted">
+            <i class="fa fa-plug fa-fw"></i>
+            {{ view.page_title }}
+        </h2>
+        <div class="col-lg-4">
+            <div class="list-group">
+                {% for location in view.locations_set %}
+                    <a href="{% url 'equipment_emplacement' location.id %}" class="list-group-item">
+                        {{ location.emplacement }}
+                        <span class="pull-right text-danger">
+                            Всего: <b>{{ location.emplacement_count }}</b>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+            <!-- /.list-group -->
+        </div>
+    </div>
+{% endblock %}

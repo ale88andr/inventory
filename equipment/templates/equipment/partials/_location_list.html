@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <i class="fa fa-th-list fa-fw"></i> {{ type.value }}: Список оборудования
+        <i class="fa fa-location-arrow fa-fw"></i> {{ location.emplacement }}: Список оборудования
         <div class="pull-right">
             <div class="btn-group">
                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -9,7 +9,8 @@
                 </button>
                 <ul class="dropdown-menu pull-right" role="menu">
                     <li><a href="{{request.META.HTTP_REFERER}}">Назад</a>
-                    <li><a href="{% url 'equipments_types' %}">Все типы оборудования</a></li>
+                    <li><a href="{% url 'equipments_locations' %}">Все месторасположения</a>
+                    </li>
                     <li class="divider"></li>
                     <li><a href="?xls=True">Экспорт в XLS</a>
                     </li>
@@ -26,11 +27,11 @@
                         <thead>
                             <tr>
                                 <th class="success">#</th>
+                                <th class="warning text-warning">Тип Оборудования</th>
                                 <th><b>Модель</b></th>
                                 <th>Инвентарный номер</th>
                                 <th>Серийный номер</th>
                                 <th>Сотрудник</th>
-                                <th class="warning text-warning">Расположение</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,15 +40,15 @@
                                     <td class="success">
                                         {{ forloop.counter }}
                                     </td>
+                                    <td class="warning text-warning">
+                                        <b>{{ equipment.type.value }}</b>
+                                    </td>
                                     <td>
                                         <b>{{ equipment.model }}</b>
                                     </td>
                                     <td class="text-primary"><b>{{ equipment.inventory_number|default:'Не имеет' }}</b></td>
                                     <td class="text-danger">{{ equipment.serial_number|default:'Не имеет' }}</td>
                                     <td class="text-uppercase">{{ equipment.responsible.short_full_name }}</td>
-                                    <td class="warning text-warning">
-                                        <b>{{ equipment.responsible.location.emplacement }}</b>
-                                    </td>
                                 </tr>
                             {% empty %}
                                 <td colspan="7">
