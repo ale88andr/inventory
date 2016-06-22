@@ -128,6 +128,18 @@ class Report:
 
 
 class XLS:
+    """
+        Common class for generate report from queryset.
+        Usage:
+            queryset = Anything.objects.all()
+            columns = (
+                {'repr': 'Column A', 'property': 'column_a', 'size': 5000},
+                {'repr': 'Column B', 'property': 'column_b', 'size': 3000},
+            )
+            xls = XLS(sheet_name='My sheet name')
+            xls.sheet_header = 'Header that must be first in report sheet'
+            return xls.render(queryset=queryset, columns=columns)
+    """
     ENCODING = 'utf-8'
     CONTENT_TYPE = 'application/vnd.ms-excel'
     INCREMENT_VALUE = 1
@@ -230,6 +242,7 @@ class XLS:
                 self._sheet.col(index).width = column['size']
 
         type_counter = 0
+
         # columns data
         for entity in queryset:
             self.increment_row()

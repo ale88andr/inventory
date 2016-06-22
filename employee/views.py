@@ -2,6 +2,7 @@
 from django.views.generic import TemplateView
 
 from employee.models import Employee, Organisation
+from reports.models import XLS
 
 
 class Dashboard(TemplateView):
@@ -31,6 +32,30 @@ class EmployeesView(TemplateView):
         self.organisation_employees = self.organisation.employee_set.count()
 
         return super(EmployeesView, self).dispatch(request, *args)
+
+    def get(self, request, *args, **kwargs):
+        if 'xls' in request.GET:
+            return self._export_to_xls()
+        return super(EmployeesView, self).get(request, *args, **kwargs)
+
+    def _export_to_xls(self):
+        header_title = 'Рабочие места'
+
+        if self.organisation:
+            header_title += ': ' + self.organisation.title
+
+        columns = (
+            {'repr': '# РМ', 'property': 'id', 'size': 2000},
+            {'repr': 'Сотрудник', 'property': 'short_full_name', 'size': 5000},
+            {'repr': 'Должность', 'property': 'get_position_display', 'size': 9000},
+            {'repr': 'Подразделение', 'property': 'department', 'size': 9000},
+            {'repr': 'Расположение', 'property': 'location', 'size': 4000},
+            {'repr': 'Кол-во оборудования', 'property': 'equipment_set.count', 'size': 5000}
+        )
+        xls = XLS(sheet_name='Рабочие места')
+        xls.sheet_header = header_title
+
+        return xls.render(queryset=self.collection, columns=columns)
 
     def employees(self):
         return self.collection
