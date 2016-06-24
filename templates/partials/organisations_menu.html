@@ -3,7 +3,7 @@
         <a href="{% url 'employees' pk=item.pk %}">
             <span class="fa fa-institution"> </span>
             {{ item.title }}
-            <span class="fa arrow">
+            <span class="fa arrow"></span>
         </a>
         {% if item.has_subordinates %}
             <ul class="nav nav-third-level">
