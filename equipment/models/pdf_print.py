@@ -1,6 +1,12 @@
+import copy
+
 from reportlab.lib.pagesizes import A4, letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image
+
+from inventory import settings
 
 
 class PdfPrint:
@@ -15,8 +21,8 @@ class PdfPrint:
         self.width, self.height = self.pageSize
 
     def report(self, equipment_qrcode, equipment_inventory, equipment_serial):
-        # font_bold_url = "%s/plan/font-bold.ttf" % settings.BASE_DIR
-        # pdfmetrics.registerFont(TTFont('MegaFontBold', font_bold_url))
+        font_url = "%s/assets/css/dist/fonts/calibri.ttf" % settings.BASE_DIR
+        pdfmetrics.registerFont(TTFont('Calibri', font_url))
 
         # set some characteristics for pdf document
         document = SimpleDocTemplate(
@@ -27,13 +33,21 @@ class PdfPrint:
             bottomMargin=72,
             pagesize=self.pageSize,)
         styles = getSampleStyleSheet()
-        # styles.add(ParagraphStyle(name='default', alignment=CA_CENTER, fontSize=13, spaceAfter=8, fontName='Calibry'))
+
+        title_text = copy.copy(styles['Title'])
+        title_text.fontName = 'Calibri'
+        title_text.fontSize = 22
+
+        body_text = copy.copy(styles['Normal'])
+        body_text.alignment = 1
+        body_text.fontSize = 16
+        body_text.fontName = 'Calibri'
 
         # create document
         data = [
             Image(equipment_qrcode),
-            Paragraph(str(equipment_inventory), styles['Title']),
-            Paragraph('S/N{0}'.format(equipment_serial), styles['BodyText'])
+            Paragraph('Инв. {0}'.format(str(equipment_inventory)), title_text),
+            Paragraph('S/N{0}'.format(equipment_serial), body_text)
         ]
         document.build(data)
         pdf = self.buffer.getvalue()

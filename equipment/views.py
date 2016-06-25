@@ -64,7 +64,7 @@ class EquipmentsView(ListView):
         filename = 'sticker_' + equipment.serial_number
         response['Content-Disposition'] = 'attachement; filename={0}.pdf'.format(filename)
         buffer = BytesIO()
-        report = PdfPrint(buffer, 'Letter')
+        report = PdfPrint(buffer, 'A4')
         pdf = report.report(
             equipment_qrcode=equipment.generate_qrcode(pdf=True),
             equipment_inventory=equipment.inventory_number,
