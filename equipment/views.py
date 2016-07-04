@@ -63,7 +63,8 @@ class EquipmentsView(ListView):
         filename = 'sticker_' + equipment.serial_number
         pdf = PDF(fileName=filename)
         pdf.insertImage(equipment.generate_qrcode(pdf=True))
-        pdf.insertRow('{0}'.format(equipment.inventory_number), 'h1_qr', lineBreak=False)
+        if equipment.inventory_number:
+            pdf.insertRow('{0}'.format(equipment.inventory_number), 'h1_qr', lineBreak=False)
         pdf.insertRow('s/n {0}'.format(equipment.serial_number), 'center')
         return pdf.render()
 
