@@ -5,7 +5,7 @@ from django.views.generic import ListView, TemplateView, DetailView
 
 from employee.models import Location
 from equipment.models.pdf_print import PdfPrint
-from reports.models import XLS
+from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm
 
@@ -25,7 +25,7 @@ class EquipmentsView(ListView):
         self.search_form.is_valid()
 
         if 'pdf' in request.POST:
-            return EquipmentsView.sticker(request.POST.get('pdf'))
+            return self.sticker_v2(request.POST.get('pdf'))
 
         if self.filter_form.cleaned_data.get('on_page'):
             self.paginate_by = int(self.filter_form.cleaned_data.get('on_page'))
@@ -58,20 +58,14 @@ class EquipmentsView(ListView):
         return queryset
 
     @staticmethod
-    def sticker(equipment_id):
+    def sticker_v2(equipment_id):
         equipment = Equipment.get(equipment_id)
-        response = HttpResponse(content_type='application/pdf')
         filename = 'sticker_' + equipment.serial_number
-        response['Content-Disposition'] = 'attachement; filename={0}.pdf'.format(filename)
-        buffer = BytesIO()
-        report = PdfPrint(buffer, 'A4')
-        pdf = report.report(
-            equipment_qrcode=equipment.generate_qrcode(pdf=True),
-            equipment_inventory=equipment.inventory_number,
-            equipment_serial=equipment.serial_number
-        )
-        response.write(pdf)
-        return response
+        pdf = PDF(fileName=filename)
+        pdf.insertImage(equipment.generate_qrcode(pdf=True))
+        pdf.insertRow('{0}'.format(equipment.inventory_number), 'h1_qr', lineBreak=False)
+        pdf.insertRow('s/n {0}'.format(equipment.serial_number), 'center')
+        return pdf.render()
 
 
 class EquipmentTypesView(TemplateView):

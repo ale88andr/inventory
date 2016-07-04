@@ -1,18 +1,8 @@
-# coding=utf-8
-import copy
-from io import BytesIO
-
-from django.http import HttpResponse
+import datetime
 from django.views.generic import TemplateView
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
 
 from employee.models import Employee, Organisation
-from reports.models import XLS
+from reports.models import XLS, PDF
 
 
 class Dashboard(TemplateView):
@@ -93,48 +83,25 @@ class EmployeeView(TemplateView):
         return super(EmployeeView, self).get(request, *args, **kwargs)
 
     def generate_pdf(self):
-        pdfmetrics.registerFont(TTFont('Calibri', 'assets/css/dist/fonts/calibri.ttf'))
-        response = HttpResponse(content_type='application/pdf')
-        filename = "form_%s.pdf" % self.employee.surname
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-        buffer = BytesIO()
-        document = SimpleDocTemplate(
-            buffer,
-            pagesize=letter,
-            rightMargin=40,
-            leftMargin=40,
-            topMargin=60,
-            bottomMargin=18,
+        pdf = PDF(fileName='document')
+        pdf.insertRow('Форма учета инвентаризационного оборудования', 'h1')
+        pdf.insertRow('от {0}'.format(datetime.datetime.now().strftime('%Y-%m-%d')), 'dt')
+        pdf.insertRow(self.employee.organisation.title)
+        pdf.insertRow('{0} {1}'.format(self.employee.get_position_display(), self.employee.short_full_name()))
+        pdf.insertRow('Список оборудования:', 'h3')
+
+        columns = ('Инв. №', 'Серийный номер', 'Тип', 'Модель')
+        set = [(e.inventory_number, e.serial_number, e.type.value, e.model) for e in self.employee_equipments]
+
+        pdf.insertTable(columns=columns, queryset=set)
+        pdf.insertBreak()
+        pdf.insertRow('Всего по списку: {0} ед.'.format(len(set)))
+        pdf.insertRow(
+            '{0} _______________________________________________________ {1}'.
+            format(datetime.datetime.now().strftime('%Y.%m.%d'), self.employee.short_full_name()),
+            'center',
+            lineBreak=False
         )
-        report = []
-        styles = getSampleStyleSheet()
+        pdf.insertRow('(подпись)', 'center_md')
 
-        # Styles definition
-        header_style = copy.copy(styles['Normal'])
-        header_style.fontName = 'Calibri'
-        header_style.fontSize = 18
-        header_style.alignment = 0
-        header_style.spaceAfter = 6
-
-        header = Paragraph("Бланк учета оборудования", header_style)
-        report.append(header)
-        headings = ('Инв. №', 'Серийный номер', 'Тип', 'Модель', 'М.П.')
-        equipments_set = [
-            (e.inventory_number, e.serial_number, e.type.value, e.model, '') for e in self.employee_equipments
-        ]
-
-        t = Table([headings] + equipments_set)
-        t.setStyle(TableStyle(
-            [
-                ('GRID', (0, 0), (4, -1), 1, colors.lightgrey),
-                ('LINEBELOW', (0, 0), (-1, 0), 2, colors.lightgrey),
-                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-                ('FONT', (0,0), (4,-1), 'Calibri')
-            ]
-        ))
-        report.append(t)
-        document.build(report)
-        response.write(buffer.getvalue())
-        buffer.close()
-
-        return response
+        return pdf.render()

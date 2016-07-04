@@ -1,7 +1,17 @@
-from datetime import date, datetime
+import copy
+from io import BytesIO
+
 import xlwt
+
+from datetime import date, datetime
 from django.db.models import Count
 from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer, Table, TableStyle
 from equipment.models.equipment import Equipment
 from equipment.models.equipment_types import EquipmentTypes
 
@@ -283,3 +293,108 @@ class XLS:
             except AttributeError:
                 raise Exception('Wrong model or relation column attribute "%s"' % field)
         return attr
+
+
+class PDF:
+
+    DOCUMENT_RIGHT_MARGIN = 40
+    DOCUMENT_LEFT_MARGIN = 40
+    DOCUMENT_TOP_MARGIN = 60
+    DOCUMENT_BOTTOM_MARGIN = 18
+
+    FONT_URL = 'assets/css/dist/fonts/DejaVuSansCondensed.ttf'
+
+    data = []
+
+    def __init__(self, pageSize='A4', fileName=None):
+        self.buffer = BytesIO()
+
+        self.response = HttpResponse(content_type='application/pdf')
+        filename = "%s.pdf" % fileName if fileName else 'form'
+        self.response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        # default format is A4
+        if pageSize == 'A4':
+            self.pageSize = A4
+        elif pageSize == 'Letter':
+            self.pageSize = letter
+
+        self.document = SimpleDocTemplate(
+            self.buffer,
+            pagesize=self.pageSize,
+            rightMargin=self.DOCUMENT_RIGHT_MARGIN,
+            leftMargin=self.DOCUMENT_LEFT_MARGIN,
+            topMargin=self.DOCUMENT_TOP_MARGIN,
+            bottomMargin=self.DOCUMENT_BOTTOM_MARGIN,
+        )
+
+        pdfmetrics.registerFont(TTFont('Custom', self.FONT_URL))
+        self.setStyles()
+
+    def setStyles(self):
+        styles = getSampleStyleSheet()
+
+        self.h1 = copy.copy(styles['Normal'])
+        self.h1.fontName = 'Custom'
+        self.h1.fontSize = 20
+        self.h1.alignment = 1
+
+        self.h1_qr = copy.copy(self.h1)
+        self.h1_qr.fontSize = 24
+        self.h1_qr.leading = 26
+
+        self.h3 = self.h1
+        self.h3.fontSize = 16
+
+        self.default = copy.copy(styles['Normal'])
+        self.default.alignment = 4
+        self.default.fontSize = 11
+        self.default.fontName = 'Custom'
+
+        self.dt = copy.copy(styles['Normal'])
+        self.dt.alignment = 2
+        self.dt.fontName = 'Custom'
+
+        self.center = copy.copy(self.dt)
+        self.center.alignment = 1
+
+        self.center_md = copy.copy(self.center)
+        self.center.fontSize = 12
+
+    def insertRow(self, data, style=None, lineBreak=True):
+        self.data.append(Paragraph(data, getattr(self, style) if style else self.default))
+        if lineBreak is True:
+            self.insertBreak()
+
+    def insertBreak(self):
+        self.data.append(Spacer(1, 32))
+
+    def insertImage(self, image):
+        self.data.append(Image(image))
+
+    def insertTable(self, columns=None, queryset=None):
+        row_count = 0
+
+        if columns:
+            row_count = len(columns) - 1
+            print(row_count)
+        elif queryset:
+            row_count = len(queryset) - 1
+
+        t = Table([columns] + queryset)
+        t.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (row_count, -1), 1, colors.lightgrey),
+                ('LINEBELOW', (0, 0), (-1, 0), 2, colors.lightgrey),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                ('FONT', (0,0), (row_count,-1), 'Custom')
+            ]
+        ))
+        self.data.append(t)
+
+    def render(self):
+        self.document.build(self.data)
+        self.response.write(self.buffer.getvalue())
+        self.buffer.close()
+
+        return self.response
