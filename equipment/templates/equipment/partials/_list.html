@@ -1,7 +1,7 @@
 <!-- Equipment item -->
 <li class="equipment-li">
     <div class="col-lg-3">
-        <img class="img-responsive img-thumbnail" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>
+        <img class="img-responsive img-thumbnail center-block" width="120" height="120" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>
         {% if equipment.inventory_number %}
             <h4 class="text-center text-primary"><b># {{ equipment.inventory_number }}</b></h4>
         {% else %}

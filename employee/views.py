@@ -2,16 +2,21 @@ import datetime
 from django.views.generic import TemplateView
 
 from employee.models import Employee, Organisation
+from equipment.models import Equipment
 from reports.models import XLS, PDF
 
 
 class Dashboard(TemplateView):
     template_name = 'employee/employees.html'
     page_title = 'Инвентаризация техники'
-    employees = Employee.objects.all()
+    employees = Employee.all().count()
+    equiments = Equipment.all().count()
 
     def count_employees(self):
-        return len(self.employees)
+        return self.employees
+
+    def count_equipments(self):
+        return self.equiments
 
 
 class EmployeesView(TemplateView):
