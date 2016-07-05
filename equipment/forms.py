@@ -1,12 +1,19 @@
 from django import forms
+
+from equipment.models import Equipment
 from .models.equipment_types import EquipmentTypes
 from employee.models.employee import Employee
 
 
-class EquipmentFilterForm(forms.Form):
+class EmployeeCollectionChoice():
+
+    employees = [(c.id, c.short_full_name()) for c in Employee.all()]
+    employee_choices = tuple(employees) + ((None, '--- Ответственный ---'),)
+
+
+class EquipmentFilterForm(forms.Form, EmployeeCollectionChoice):
 
     blank_choice_type = ((None, '--- Выберите тип ---'),)
-    blank_choice_responsible = ((None, '--- Ответственный ---'),)
 
     SORTED_FIELDS = (
         (None, '--- Сортировать по ---'),
@@ -27,15 +34,13 @@ class EquipmentFilterForm(forms.Form):
         (99999, 'Все'),
     )
 
-    employee_choices = [(c.id, c.short_full_name()) for c in Employee.all()]
-
     filter_type = forms.ChoiceField(
         choices=tuple(EquipmentTypes.all().values_list('id', 'value')) + blank_choice_type,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     filter_responsible = forms.ChoiceField(
-        choices=tuple(employee_choices) + blank_choice_responsible,
+        choices=EmployeeCollectionChoice.employee_choices,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
@@ -59,3 +64,15 @@ class EquipmentSearchForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Модель, серийный или инвентарный номер...'})
     )
 
+
+class EquipmentChownForm(forms.ModelForm, EmployeeCollectionChoice):
+
+    responsible = forms.ChoiceField(
+        choices=EmployeeCollectionChoice.employee_choices,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = Equipment
+        fields = ('responsible', )

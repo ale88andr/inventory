@@ -42,7 +42,7 @@ class EmployeesView(TemplateView):
         header_title = 'Рабочие места'
 
         if self.organisation:
-            header_title += ': ' + self.organisation.title
+            header_title += ': {0}'.format(self.organisation.title)
 
         columns = (
             {'repr': '# РМ', 'property': 'id', 'size': 2000},

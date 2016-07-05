@@ -1,0 +1,15 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.page_title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h3 class="page-header">
+            <i class="fa fa-retweet fa-fw"></i>
+            {{ view.page_title }}
+        </h3>
+        <!-- equipment chown form -->
+        {% include 'equipment/partials/_chown.html' %}
+        <!-- \equipment chown form -->
+    </div>
+{% endblock %}

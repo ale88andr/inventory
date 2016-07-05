@@ -1,13 +1,10 @@
-from io import BytesIO
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView, DetailView, FormView, UpdateView
 
 from employee.models import Location
-from equipment.models.pdf_print import PdfPrint
 from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
-from .forms import EquipmentFilterForm, EquipmentSearchForm
+from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm
 
 
 class EquipmentsView(ListView):
@@ -147,3 +144,18 @@ class DetailLocationView(DetailView):
         xls = XLS(sheet_name=location.emplacement)
         xls.sheet_header = 'Оборудование %s находящееся на баллансе' % location.emplacement
         return xls.render(queryset=equipments_set, columns=columns)
+
+
+class EquipmentChown(UpdateView):
+    form = EquipmentChownForm
+    template_name = 'equipment/chown.html'
+    page_title = 'Передача оборудования: '
+    model = Equipment
+    context_object_name = 'equipment'
+    fields = ['responsible']
+    success_url = '/equipments/'
+
+    def get_object(self, queryset=None):
+        object = super(EquipmentChown, self).get_object(queryset)
+        self.page_title += object.model
+        return object

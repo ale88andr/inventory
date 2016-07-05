@@ -1,0 +1,30 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Выбор Ответственного Лица:
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-bordered table-hover">
+            <h3 class="text-warning">Текущие данные:</h3>
+            <tbody>
+                <tr>
+                    <td><span class="text-success">{{ equipment.type }}</span></td>
+                    <td><b>{{ equipment.model }}</b>({{ equipment.inventory_number|default:equipment.serial_number }})</td>
+                    <td><b class="text-primary">{{ equipment.responsible.short_full_name }}</b> ({{ equipment.responsible.get_position_display }})</td>
+                    <td><b>{{ equipment.responsible.location }}</b></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="well-sm">
+            <form action="" class="form form-inline" method="post">
+                {% csrf_token %}
+                <legend>Сменить ответственное лицо.</legend>
+                {% for field in view.form %}
+                    <div class="form-group">
+                        {{ field }}
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Сохранить изменения">
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+</div>
