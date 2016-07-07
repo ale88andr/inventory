@@ -1,0 +1,26 @@
+{% for event in events %}
+    <li>
+        <a href="#">
+            <div>
+                {% if event.is_addition %}
+                    <i class="fa fa-plus fa-fw"></i>
+                {% elif event.is_deletion %}
+                    <i class="fa fa-trash-o fa-fw"></i>
+                {% elif event.is_change %}
+                    <i class="fa fa-pencil fa-fw"></i>
+                {% endif %}
+                <b class="text-primary">{{ event.object_repr }}</b>
+                <br>
+                <span class="text-warning">{{ event.content_type }}</span>
+                <span class="pull-right text-muted small">{{ event.action_time }}</span>
+            </div>
+        </a>
+    </li>
+    <li class="divider"></li>
+{% endfor %}
+<li>
+    <a class="text-center" href="#">
+        <strong>Детализация событий</strong>
+        <i class="fa fa-angle-right"></i>
+    </a>
+</li>
