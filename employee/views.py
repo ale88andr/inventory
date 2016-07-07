@@ -1,4 +1,6 @@
 import datetime
+
+from django.db.models import Count
 from django.views.generic import TemplateView
 
 from employee.models import Employee, Organisation
@@ -63,7 +65,7 @@ class EmployeesView(TemplateView):
         return xls.render(queryset=self.collection, columns=columns)
 
     def employees(self):
-        return self.collection
+        return self.collection.annotate(equipments_count=Count('equipment'))
 
     def employees_count(self):
         return len(self.collection)
@@ -80,7 +82,7 @@ class EmployeeView(TemplateView):
         if kwargs.get('employee_pk'):
             self.employee = Employee.get(kwargs.get('employee_pk'))
             self.page_title += self.employee.info()
-            self.employee_equipments = self.employee.equipment_set.all()
+            self.employee_equipments = self.employee.equipment_set.select_related('type').all()
 
         if 'pdf' in request.GET:
             return self.generate_pdf()

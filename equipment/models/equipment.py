@@ -96,7 +96,7 @@ class Equipment(models.Model):
     @staticmethod
     def all():
         return Equipment.objects.select_related(
-            'type', 'responsible__location', 'responsible__department', 'responsible'
+            'type', 'responsible__location', 'responsible__department', 'responsible', 'responsible__organisation'
         ).all()
 
     @staticmethod
