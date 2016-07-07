@@ -1,4 +1,4 @@
-__version__ = '0.3.2 alpha'
+__version__ = '0.4.3 alpha'
 __appname__ = 'Инвентаризация ПФР'
 
 
