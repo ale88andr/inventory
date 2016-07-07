@@ -206,14 +206,7 @@
         </a>
 
         <ul class="dropdown-menu dropdown-user">
-            {% if request.user.is_authenticated %}
-                <li><a href="#"><i>Вы вошли как: {{ request.user.get_short_name }}</i></a></li>
-                <li><a href="#"><i class="fa fa-gear fa-fw"></i> Настройки</a></li>
-                <li class="divider"></li><li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Выйти</a></li>
-            {% else %}
-                <li><a href="#"><i class="fa fa-comment fa-fw"></i> <i class="text-warning">Вы находитесь в режиме просмотра. <br> Авторизуйтесь, перейдя по ссылке ниже, <br> для активации своих привилегий.</i></a></li>
-                <li class="divider"></li><li><a href="{% url 'login' %}"><i class="fa fa-key fa-fw"></i> Авторизоваться</a></li>
-            {% endif %}
+            {% include 'partials/_user.html' %}
         </ul>
         <!-- /.dropdown-user -->
     </li>
