@@ -1,0 +1,73 @@
+{% extends 'layouts/auth.html' %}
+
+{% block content %}
+    <style>
+        body {
+            height: 100%;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        .form-signin {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        .form-signin input[type="text"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .form-signin .form-control {
+            position: relative;
+            height: auto;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+
+    <div class="container">
+
+        <form class="form-signin" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <p class="text-center text-danger">Ваш идентификатор и пароль не совпадают.</p>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p class="text-center text-danger">Ваш аккаунт не имеет привилегий для просмотра данной страницы. Чтобы продолжить,
+                    авторизуйтесь с помощью другого аккаунта, которому предоставленны полномочия.</p>
+                {% else %}
+                    <p class="text-center text-danger"><b>Пожалуйста авторизуйтесь, чтобы получить доступ к этой странице.</b></p>
+                {% endif %}
+            {% endif %}
+
+            <h2 class="form-signin-heading text-center">Вход в систему</h2>
+            <br>
+            <label for="inputUsername" class="sr-only">Идентификаитор:</label>
+            <input type="text" id="inputUsername" class="form-control" name="username" placeholder="Идентификатор" required="True" autofocus="True">
+            <label for="inputPassword" class="sr-only">Пароль</label>
+            <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Пароль" required="True">
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+            <input type="hidden" name="next" value="{{ next }}" />
+            <br>
+            <p class="text-center text-muted">или вернуться...</p>
+            <p class="text-center">
+                <a href="{% url 'dashboard' %}">На главную</a>
+                |
+                <a href="{{request.META.HTTP_REFERER}}">Назад</a>
+            </p>
+        </form>
+
+    </div>
+{% endblock %}

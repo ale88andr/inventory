@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, DetailView, FormView, UpdateView
 
 from employee.models import Location
@@ -146,6 +148,7 @@ class DetailLocationView(DetailView):
         return xls.render(queryset=equipments_set, columns=columns)
 
 
+@method_decorator(login_required, name='dispatch')
 class EquipmentChown(UpdateView):
     form = EquipmentChownForm
     template_name = 'equipment/chown.html'

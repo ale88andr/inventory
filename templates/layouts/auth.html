@@ -1,0 +1,33 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'css/dist/bootstrap.min.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+    {% block content %}
+    {% endblock %}
+
+    <!-- jQuery -->
+    <script src="{% static 'js/dist/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/dist/bootstrap.min.js' %}"></script>
+</body>
+</html>

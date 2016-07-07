@@ -25,6 +25,7 @@ LOCAL_APPS = [
     'employee',
     'equipment',
     'reports',
+    'users',
 ]
 
 DJANGO_PACKAGES = [
@@ -98,3 +99,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets'),
 ]
+
+# Custom user model
+AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = '/login'
+LOGOUT_URL = '/logout'
+
+LOGIN_REDIRECT_URL = '/'
