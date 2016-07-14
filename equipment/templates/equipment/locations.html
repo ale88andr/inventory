@@ -11,7 +11,7 @@
         <div class="col-lg-4">
             <div class="list-group">
                 {% for location in view.locations_set %}
-                    <a href="{% url 'equipment_emplacement' location.id %}" class="list-group-item">
+                    <a href="{% url 'equipment:emplacement' location.id %}" class="list-group-item">
                         {{ location.emplacement }}
                         <span class="pull-right text-danger">
                             Всего: <b>{{ location.emplacement_count }}</b>

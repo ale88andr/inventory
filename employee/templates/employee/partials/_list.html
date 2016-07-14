@@ -10,10 +10,6 @@
                 <ul class="dropdown-menu pull-right" role="menu">
                     <li><a href="{{request.META.HTTP_REFERER}}">Назад</a>
                     </li>
-                    <li><a href="#">Another action</a>
-                    </li>
-                    <li><a href="#">Something else here</a>
-                    </li>
                     <li class="divider"></li>
                     <li><a href="?xls=True">Экспорт в XLS</a>
                     </li>
@@ -45,7 +41,7 @@
                                         {{ employee.id }}
                                     </td>
                                     <td>
-                                        <a href="{% url 'employee' employee.id %}">
+                                        <a href="{% url 'employee:detail' employee_pk=employee.id %}">
                                             <b>{{ employee.short_full_name }}</b>
                                         </a>
                                     </td>

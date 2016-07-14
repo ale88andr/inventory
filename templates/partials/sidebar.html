@@ -19,13 +19,13 @@
             </li>
             {% organisations_menu %}
             <li>
-                <a href="{% url 'equipments' %}"><i class="fa fa-wrench fa-fw"></i> Оборудование <span class="fa arrow"></a>
+                <a href="{% url 'equipment:index' %}"><i class="fa fa-wrench fa-fw"></i> Оборудование <span class="fa arrow"></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="{% url 'equipments_types' %}">Типы оборудования</a>
+                        <a href="{% url 'equipment:types' %}">Типы оборудования</a>
                     </li>
                     <li>
-                        <a href="{% url 'equipments_locations' %}">По расположению</a>
+                        <a href="{% url 'equipment:locations' %}">По расположению</a>
                     </li>
                 </ul>
             </li>

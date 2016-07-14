@@ -12,10 +12,10 @@ class UserManager(BaseUserManager):
     """
     def create_user(self, username, password=None):
         if not username:
-            raise ValueError('Необходимо указать фамилию')
+            raise ValueError('Необходимо указать идентификатор пользователя.')
 
         user = self.model(
-            username = username,
+            username=username,
         )
 
         user.set_password(password)
@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True
     )
     username = models.CharField(
-        'Фамилия',
+        'Идентификатор',
         max_length=40,
         unique=True,
         db_index=True
@@ -63,6 +63,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     ip = models.GenericIPAddressField(
         verbose_name='IP адрес',
         null=True,
+        blank=True,
+    )
+    surname = models.CharField(
+        'Фамилия',
+        max_length=50,
+        blank=True
+    )
+    first_name = models.CharField(
+        'Имя',
+        max_length=25,
+        blank=True
+    )
+    middle_name = models.CharField(
+        'Отчество',
+        max_length=25,
         blank=True
     )
 
@@ -76,6 +91,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.username
+
+    def get_full_name(self):
+        return '{sn} {fn} {mn}'.format(sn=self.surname, fn=self.first_name, mn=self.middle_name)
+
+    @property
+    def login(self):
+        return self.get_username()
+
+    @property
+    def full_name(self):
+        return self.get_full_name()
 
     def __str__(self):
         return self.username

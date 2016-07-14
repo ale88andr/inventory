@@ -6,9 +6,10 @@ from employee.views import Dashboard
 
 urlpatterns = [
     url(r'^backend/', include(admin.site.urls)),
-    url(r'^dashboard/', include('employee.urls')),
-    url(r'^equipments/', include('equipment.urls')),
+    url(r'^enterprise/', include('employee.urls', namespace='employee')),
+    url(r'^equipments/', include('equipment.urls', namespace='equipment')),
     url(r'^reports/', include('reports.urls')),
+    url(r'^events/', include('events.urls', namespace='events')),
     url(r'^$', Dashboard.as_view(), name='dashboard'),
 
     # Authentication system url's

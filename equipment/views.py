@@ -9,7 +9,7 @@ from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm
 
 
-class EquipmentsView(ListView):
+class EquipmentIndexView(ListView):
     model = Equipment
     paginate_by = 10
     context_object_name = 'equipments'
@@ -29,10 +29,10 @@ class EquipmentsView(ListView):
         if self.filter_form.cleaned_data.get('on_page'):
             self.paginate_by = int(self.filter_form.cleaned_data.get('on_page'))
 
-        return super(EquipmentsView, self).dispatch(request, *args, **kwargs)
+        return super(EquipmentIndexView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(EquipmentsView, self).get_context_data(**kwargs)
+        context = super(EquipmentIndexView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_form
         context['search_form'] = self.search_form
         return context
@@ -74,14 +74,14 @@ class EquipmentTypesView(TemplateView):
     type_set_annotation = EquipmentTypes.annotation.all()
 
 
-class DetailTypeView(DetailView):
+class EquipmentTypeView(DetailView):
     template_name = 'equipment/type.html'
     page_title = 'Оборудование: '
     context_object_name = 'type'
     queryset = EquipmentTypes.equipments.all()
 
     def get_context_data(self, **kwargs):
-        context = super(DetailTypeView, self).get_context_data(**kwargs)
+        context = super(EquipmentTypeView, self).get_context_data(**kwargs)
         self.page_title += self.object.value
         context['equipments_type_count'] = str(self.object.equipment_set.count())
         context['equipments'] = self.object.equipment_set.all
@@ -90,7 +90,7 @@ class DetailTypeView(DetailView):
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
             return self._render_type_report(kwargs.get('pk'))
-        return super(DetailTypeView, self).get(request, *args, **kwargs)
+        return super(EquipmentTypeView, self).get(request, *args, **kwargs)
 
     @staticmethod
     def _render_type_report(type_pk):
@@ -114,14 +114,14 @@ class EquipmentLocationsView(TemplateView):
     locations_set = Location.annotation.all()
 
 
-class DetailLocationView(DetailView):
+class EquipmentEmplacementView(DetailView):
     template_name = 'equipment/location.html'
     page_title = 'Месторасположение: '
     context_object_name = 'location'
     queryset = Location.objects.all()
 
     def get_context_data(self, **kwargs):
-        context = super(DetailLocationView, self).get_context_data(**kwargs)
+        context = super(EquipmentEmplacementView, self).get_context_data(**kwargs)
         self.page_title += self.object.emplacement
         context['equipments'] = Equipment.objects.filter(responsible__location_id=self.object.pk)
         context['equipments_location_count'] = str(context['equipments'].count())
@@ -130,7 +130,7 @@ class DetailLocationView(DetailView):
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
             return self._render_type_report(kwargs.get('pk'))
-        return super(DetailLocationView, self).get(request, *args, **kwargs)
+        return super(EquipmentEmplacementView, self).get(request, *args, **kwargs)
 
     @staticmethod
     def _render_type_report(location_pk):
@@ -149,7 +149,7 @@ class DetailLocationView(DetailView):
 
 
 @method_decorator(login_required, name='dispatch')
-class EquipmentChown(UpdateView):
+class EquipmentChownView(UpdateView):
     form = EquipmentChownForm
     template_name = 'equipment/chown.html'
     page_title = 'Передача оборудования: '
@@ -159,6 +159,6 @@ class EquipmentChown(UpdateView):
     success_url = '/equipments/'
 
     def get_object(self, queryset=None):
-        object = super(EquipmentChown, self).get_object(queryset)
+        object = super(EquipmentChownView, self).get_object(queryset)
         self.page_title += object.model
         return object

@@ -26,6 +26,7 @@ LOCAL_APPS = [
     'equipment',
     'reports',
     'users',
+    'events',
 ]
 
 DJANGO_PACKAGES = [

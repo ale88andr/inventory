@@ -11,7 +11,7 @@
         <div class="col-lg-4">
             <div class="list-group">
                 {% for type in view.type_set_annotation %}
-                    <a href="{% url 'equipment_type' type.id %}" class="list-group-item">
+                    <a href="{% url 'equipment:type' type.id %}" class="list-group-item">
                         {{ type.value }}
                         <span class="pull-right text-danger">
                             Всего: <b>{{ type.types_count }}</b>
