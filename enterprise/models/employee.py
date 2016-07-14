@@ -53,7 +53,9 @@ class Employee(models.Model):
 
     @staticmethod
     def all():
-        return Employee.objects.select_related('organisation', 'department', 'location').all()
+        results = Employee.objects.all()
+        results = results.select_related('organisation', 'department', 'location')
+        return results
 
     @staticmethod
     def get(pk):

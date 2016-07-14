@@ -7,7 +7,7 @@
         <div class="panel-body">
             <div class="list-group">
                 <form method="GET" action="" class="form-horizontal">
-                    {% for field in search_form %}
+                    {% for field in view.forms.search %}
                         <a class="form-group">
                             {{ field }}
                         </a>

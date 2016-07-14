@@ -94,9 +94,11 @@ class Equipment(models.Model):
 
     @staticmethod
     def all():
-        return Equipment.objects.select_related(
+        results = Equipment.objects.all()
+        results = results.select_related(
             'type', 'responsible__location', 'responsible__department', 'responsible', 'responsible__organisation'
-        ).all()
+        )
+        return results
 
     @staticmethod
     def get(id):

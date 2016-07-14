@@ -1,12 +1,12 @@
 {% extends 'layouts/application.html' %}
 
-{% block title %}{{ view.page_title }}{% endblock %}
+{% block title %}{{ view.page.title }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <h3 class="page-header text-primary">
             <i class="fa fa-user fa-fw" aria-hidden="true"></i>
-            {{ view.page_title }}
+            {{ view.page.title }}
         </h3>
 
         {% include 'employee/partials/_item.html' %}

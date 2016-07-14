@@ -1,17 +1,17 @@
 {% extends 'layouts/application.html' %}
 
-{% block title %}{{ view.page_title }}{% endblock %}
+{% block title %}{{ view.page.title }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <h3 class="page-header">
             <i class="fa fa-building-o" aria-hidden="true"></i>
-            {{ view.organisation.title }}
+            {{ organisation.title }}
         </h3>
 
         <p class="text-muted">
             Всего оборудованных рабочих мест(сотрудников):
-            <span class="badge">{{ view.organisation_employees }}</span>
+            <span class="badge">{{ view.employees.count }}</span>
         </p>
 
         {% include 'employee/partials/_list.html' %}

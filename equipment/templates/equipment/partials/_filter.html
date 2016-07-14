@@ -3,7 +3,7 @@
    <form method="GET" action="" class="form-inline">
        <fieldset>
            <h4><i class="fa fa-filter"></i> Фильтры:</h4>
-           {% for field in filter_form %}
+           {% for field in view.forms.filter %}
                <div class="form-group">
                    {{ field }}
                </div>

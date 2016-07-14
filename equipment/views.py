@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, TemplateView, DetailView, FormView, UpdateView
+from django.utils.functional import cached_property
+from django.views.generic import ListView, TemplateView, DetailView, UpdateView
 
 from enterprise.models import Location
 from reports.models import XLS, PDF
@@ -9,12 +10,30 @@ from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm
 
 
-class EquipmentIndexView(ListView):
+class EquipmentFormMixin(object):
+
+    def forms(self):
+        """Returns a dictionary of filter and search form object"""
+        filter = self.filter_form
+        search = self.search_form
+        return {
+            'filter': filter,
+            'search': search
+        }
+
+    def page(self):
+        """Returns a dictionary of page properties"""
+        title = 'Оборудование на баллансе'
+        return {
+            'title': title
+        }
+
+
+class EquipmentIndexView(ListView, EquipmentFormMixin):
     model = Equipment
     paginate_by = 10
     context_object_name = 'equipments'
     template_name = 'equipment/list.html'
-    page_title = 'Учтённое оборудование'
 
     def dispatch(self, request, *args, **kwargs):
         self.filter_form = EquipmentFilterForm(request.GET)
@@ -30,12 +49,6 @@ class EquipmentIndexView(ListView):
             self.paginate_by = int(self.filter_form.cleaned_data.get('on_page'))
 
         return super(EquipmentIndexView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(EquipmentIndexView, self).get_context_data(**kwargs)
-        context['filter_form'] = self.filter_form
-        context['search_form'] = self.search_form
-        return context
 
     def get_queryset(self):
         if self.search_form.cleaned_data.get('search'):
@@ -74,18 +87,29 @@ class EquipmentTypesView(TemplateView):
     type_set_annotation = EquipmentTypes.annotation.all()
 
 
-class EquipmentTypeView(DetailView):
+class EquipmentTypeMixin(object):
+
+    @cached_property
+    def equipments(self):
+        """Returns a dictionary of type equipments"""
+        set = self.object.equipment_set
+        return {
+            'set': set.all(),
+            'count': set.count()
+        }
+
+    def page(self):
+        """Returns a dictionary of page properties"""
+        title = 'Оборудование: {0}'.format(self.object.value)
+        return {
+            'title': title
+        }
+
+
+class EquipmentTypeView(DetailView, EquipmentTypeMixin):
     template_name = 'equipment/type.html'
-    page_title = 'Оборудование: '
     context_object_name = 'type'
     queryset = EquipmentTypes.equipments.all()
-
-    def get_context_data(self, **kwargs):
-        context = super(EquipmentTypeView, self).get_context_data(**kwargs)
-        self.page_title += self.object.value
-        context['equipments_type_count'] = str(self.object.equipment_set.count())
-        context['equipments'] = self.object.equipment_set.all
-        return context
 
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
@@ -110,22 +134,42 @@ class EquipmentTypeView(DetailView):
 
 class EquipmentLocationsView(TemplateView):
     template_name = 'equipment/locations.html'
-    page_title = 'Расположение оборудования'
-    locations_set = Location.annotation.all()
+
+    def locations(self):
+        selection = Location.annotation.all()
+        return {
+            'selection': selection
+        }
+
+    def page(self):
+        return {
+            'title': 'Распределение оборудования по месторасположению'
+        }
 
 
-class EquipmentEmplacementView(DetailView):
+class EquipmentEmplacementMixin(object):
+
+    @cached_property
+    def equipments(self):
+        """Returns a dictionary of equipments by location"""
+        selection = Equipment.objects.filter(responsible__location_id=self.object.id)
+        return {
+            'selection': selection,
+            'count': selection.count()
+        }
+
+    def page(self):
+        """Returns a dictionary of page properties"""
+        title = 'Месторасположение:  {0}'.format(self.object.emplacement)
+        return {
+            'title': title
+        }
+
+
+class EquipmentEmplacementView(DetailView, EquipmentEmplacementMixin):
     template_name = 'equipment/location.html'
-    page_title = 'Месторасположение: '
     context_object_name = 'location'
     queryset = Location.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super(EquipmentEmplacementView, self).get_context_data(**kwargs)
-        self.page_title += self.object.emplacement
-        context['equipments'] = Equipment.objects.filter(responsible__location_id=self.object.pk)
-        context['equipments_location_count'] = str(context['equipments'].count())
-        return context
 
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
@@ -148,17 +192,27 @@ class EquipmentEmplacementView(DetailView):
         return xls.render(queryset=equipments_set, columns=columns)
 
 
+class EquipmentChownMixin(object):
+
+    def forms(self):
+        """Returns a dictionary of edit form object"""
+        edit = EquipmentChownForm
+        return {
+            'edit': edit,
+        }
+
+    def page(self):
+        """Returns a dictionary of page properties"""
+        title = 'Передача оборудования: {0}'.format(self.object.model)
+        return {
+            'title': title
+        }
+
+
 @method_decorator(login_required, name='dispatch')
-class EquipmentChownView(UpdateView):
-    form = EquipmentChownForm
+class EquipmentChownView(UpdateView, EquipmentChownMixin):
     template_name = 'equipment/chown.html'
-    page_title = 'Передача оборудования: '
     model = Equipment
     context_object_name = 'equipment'
     fields = ['responsible']
     success_url = '/equipments/'
-
-    def get_object(self, queryset=None):
-        object = super(EquipmentChownView, self).get_object(queryset)
-        self.page_title += object.model
-        return object

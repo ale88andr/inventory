@@ -35,13 +35,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for employee in view.employees %}
+                            {% for employee in view.employees.selection %}
                                 <tr>
                                     <td class="success">
                                         {{ employee.id }}
                                     </td>
                                     <td>
-                                        <a href="{% url 'employee:detail' employee_pk=employee.id %}">
+                                        <a href="{% url 'enterprise:employee' employee.id %}">
                                             <b>{{ employee.short_full_name }}</b>
                                         </a>
                                     </td>

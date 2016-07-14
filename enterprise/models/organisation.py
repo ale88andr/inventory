@@ -14,7 +14,7 @@ class Organisation(models.Model):
 
     @staticmethod
     def get(pk):
-        return get_object_or_404(Organisation, pk=pk)
+        return Organisation.objects.get(pk=pk)
 
     def has_subordinates(self):
         if self.subordinates.count():

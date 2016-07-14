@@ -18,7 +18,9 @@ class Department(models.Model):
 
     @staticmethod
     def all():
-        return Department.objects.select_related('organisation').all()
+        results = Department.objects.all()
+        results = results.select_related('organisation')
+        return results
 
     def __str__(self):
         return self.title

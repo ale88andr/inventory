@@ -6,7 +6,7 @@ from enterprise.views import Dashboard
 
 urlpatterns = [
     url(r'^backend/', include(admin.site.urls)),
-    url(r'^enterprise/', include('enterprise.urls', namespace='employee')),
+    url(r'^enterprise/', include('enterprise.urls', namespace='enterprise')),
     url(r'^equipments/', include('equipment.urls', namespace='equipment')),
     url(r'^reports/', include('reports.urls')),
     url(r'^events/', include('events.urls', namespace='events')),

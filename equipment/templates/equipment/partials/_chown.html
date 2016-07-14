@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body">
         <table class="table table-striped table-bordered table-hover">
-            <h3 class="text-warning">Текущие данные:</h3>
+            <h4 class="text-muted">Текущие данные:</h4>
             <tbody>
                 <tr>
                     <td><span class="text-success">{{ equipment.type }}</span></td>
@@ -18,7 +18,7 @@
             <form action="" class="form form-inline" method="post">
                 {% csrf_token %}
                 <legend>Сменить ответственное лицо.</legend>
-                {% for field in view.form %}
+                {% for field in view.forms.edit %}
                     <div class="form-group">
                         {{ field }}
                     </div>

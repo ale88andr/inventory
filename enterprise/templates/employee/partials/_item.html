@@ -1,8 +1,8 @@
-<div class="panel panel-info" xmlns="http://www.w3.org/1999/html">
+<div class="panel panel-info">
     <div class="panel-heading">
         <i class="fa fa-columns fa-fw"></i>
         Бланк инвентаризации сотрудника:
-        <b>{{ view.employee.short_full_name }}</b>
+        <b>{{ employee.short_full_name }}</b>
     </div>
     <div class="panel-body">
         <div class="row">
@@ -10,7 +10,7 @@
                 Организация:
             </div>
             <div class="col-lg-10 text-primary">
-                <b>{{ view.employee.organisation.title }}</b>
+                <b>{{ employee.organisation.title }}</b>
             </div>
         </div>
         <div class="row">
@@ -18,7 +18,7 @@
                 Отдел:
             </div>
             <div class="col-lg-10 text-primary">
-                <b>{{ view.employee.department.title|default:'-----' }}</b>
+                <b>{{ employee.department.title|default:'-----' }}</b>
             </div>
         </div>
         <div class="row">
@@ -26,7 +26,7 @@
                 Должность:
             </div>
             <div class="col-lg-10 text-primary">
-                <b>{{ view.employee.get_position_display }}</b>
+                <b>{{ employee.get_position_display }}</b>
             </div>
         </div>
         <div class="row">
@@ -34,7 +34,7 @@
                 Сотрудник:
             </div>
             <div class="col-lg-10 text-primary">
-                <b>{{ view.employee.full_name }}</b>
+                <b>{{ employee.full_name }}</b>
             </div>
         </div>
         <div class="row">
@@ -42,7 +42,7 @@
                 Расположение:
             </div>
             <div class="col-lg-10 text-primary">
-                <b>{{ view.employee.location.emplacement }}</b>
+                <b>{{ employee.location.emplacement }}</b>
             </div>
         </div>
 
@@ -63,7 +63,7 @@
             </thead>
             <tbody>
 
-            {% for equipment in view.employee_equipments %}
+            {% for equipment in view.equipments.selection %}
                 {% include 'employee/partials/_item_equipment.html' %}
             {% empty %}
                 <tr>
@@ -76,6 +76,6 @@
         <a href="?pdf=True" class="btn btn-danger pull-right" target="_blank"><i class="fa fa-file-pdf-o"> PDF</i></a>
     </div>
     <div class="panel-footer">
-        Всего закрепленно за сотрудником учётных единиц: <span class="badge">{{ view.employee_equipments.count }}</span>
+        Всего закрепленно за сотрудником учётных единиц: <span class="badge">{{ view.equipments.count }}</span>
     </div>
 </div>

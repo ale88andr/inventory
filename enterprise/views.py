@@ -1,56 +1,70 @@
 import datetime
 
 from django.db.models import Count
-from django.views.generic import TemplateView
+from django.utils.functional import cached_property
+from django.views.generic import TemplateView, DetailView
 
 from enterprise.models import Employee, Organisation
 from equipment.models import Equipment
 from reports.models import XLS, PDF
 
 
-class Dashboard(TemplateView):
+class DashboardMixin(object):
+
+    @cached_property
+    def employees(self):
+        selection = Employee.all()
+        return {
+            'count': selection.count()
+        }
+
+    @cached_property
+    def equipments(self):
+        selection = Equipment.all()
+        return {
+            'count': selection.count()
+        }
+
+    def page(self):
+        return {
+            'title': 'Инвентаризация оборудования'
+        }
+
+
+class Dashboard(TemplateView, DashboardMixin):
     template_name = 'employee/employees.html'
-    page_title = 'Инвентаризация техники'
-    employees = Employee.all().count()
-    equiments = Equipment.all().count()
-
-    def count_employees(self):
-        return self.employees
-
-    def count_equipments(self):
-        return self.equiments
 
 
-class EmployeesView(TemplateView):
+class OrganisationDetailMixin(object):
+
+    @cached_property
+    def employees(self):
+        employees = self.object.employee_set.select_related('location', 'department')
+        return {
+            'selection': employees.annotate(equipments_count=Count('equipment')),
+            'count': employees.count()
+        }
+
+    def page(self):
+        title = 'Рабочие места'
+        return {
+            'title': title
+        }
+
+
+class OrganisationDetailView(DetailView, OrganisationDetailMixin):
+    model = Organisation
     template_name = 'employee/list.html'
-    page_title = 'Рабочие места'
-    collection = None
-    organisation = None
-    organisation_employees = None
-
-    def dispatch(self, request, *args, **kwargs):
-        if kwargs.get('pk'):
-            self.collection = Employee.all().filter(organisation=kwargs['pk'])
-            self.organisation = Organisation.get(kwargs['pk'])
-        else:
-            self.collection = Employee.all()
-            self.organisation = Organisation.get(0)
-
-        self.organisation_employees = self.organisation.employee_set.count()
-
-        return super(EmployeesView, self).dispatch(request, *args)
+    context_object_name = 'organisation'
 
     def get(self, request, *args, **kwargs):
         if 'xls' in request.GET:
-            return self._export_to_xls()
-        return super(EmployeesView, self).get(request, *args, **kwargs)
+            self.object = self.get_object()
+            return self.render_to_xls()
 
-    def _export_to_xls(self):
-        header_title = 'Рабочие места'
+        return super(OrganisationDetailView, self).get(request, *args, **kwargs)
 
-        if self.organisation:
-            header_title += ': {0}'.format(self.organisation.title)
-
+    def render_to_xls(self):
         columns = (
             {'repr': '# РМ', 'property': 'id', 'size': 2000},
             {'repr': 'Сотрудник', 'property': 'short_full_name', 'size': 5000},
@@ -60,52 +74,58 @@ class EmployeesView(TemplateView):
             {'repr': 'Кол-во оборудования', 'property': 'equipment_set.count', 'size': 5000}
         )
         xls = XLS(sheet_name='Рабочие места')
-        xls.sheet_header = header_title
+        xls.sheet_header = 'Рабочие места: {0}'.format(self.object.title)
 
-        return xls.render(queryset=self.collection, columns=columns)
-
-    def employees(self):
-        return self.collection.annotate(equipments_count=Count('equipment'))
-
-    def employees_count(self):
-        return len(self.collection)
-
-    def employees_organisation(self):
-        return self.organisation
+        return xls.render(queryset=self.object.employee_set.all(), columns=columns)
 
 
-class EmployeeView(TemplateView):
-    template_name = 'employee/show.html'
-    page_title = 'Рабочее место: '
+class EmployeeDetailMixin(object):
+
+    @cached_property
+    def equipments(self):
+        selection = self.object.equipment_set.select_related('type')
+        return {
+            'selection': selection.all(),
+            'count': selection.count()
+        }
+
+    def page(self):
+        title = 'Рабочее место: {0}'.format(self.object.info())
+        return {
+            'title': title
+        }
+
+
+class EmployeeDetailView(DetailView, EmployeeDetailMixin):
+    model = Employee
+    template_name = 'employee/detail.html'
+    context_object_name = 'employee'
 
     def get(self, request, *args, **kwargs):
-        if kwargs.get('employee_pk'):
-            self.employee = Employee.get(kwargs.get('employee_pk'))
-            self.page_title += self.employee.info()
-            self.employee_equipments = self.employee.equipment_set.select_related('type').all()
-
         if 'pdf' in request.GET:
+            self.object = self.get_object()
             return self.generate_pdf()
 
-        return super(EmployeeView, self).get(request, *args, **kwargs)
+        return super(EmployeeDetailView, self).get(request, *args, **kwargs)
 
     def generate_pdf(self):
         pdf = PDF(fileName='document')
         pdf.insertRow('Форма учета инвентаризационного оборудования', 'h1')
         pdf.insertRow('от {0}'.format(datetime.datetime.now().strftime('%Y-%m-%d')), 'dt')
-        pdf.insertRow(self.employee.organisation.title)
-        pdf.insertRow('{0} {1}'.format(self.employee.get_position_display(), self.employee.short_full_name()))
+        pdf.insertRow(self.object.organisation.title)
+        pdf.insertRow('{0} {1}'.format(self.object.get_position_display(), self.object.short_full_name()))
         pdf.insertRow('Список оборудования:', 'h3')
 
         columns = ('Инв. №', 'Серийный номер', 'Тип', 'Модель')
-        set = [(e.inventory_number, e.serial_number, e.type.value, e.model) for e in self.employee_equipments]
+        queryset = self.object.equipment_set.select_related('type')
+        set = [(e.inventory_number, e.serial_number, e.type.value, e.model) for e in queryset]
 
         pdf.insertTable(columns=columns, queryset=set)
         pdf.insertBreak()
         pdf.insertRow('Всего по списку: {0} ед.'.format(len(set)))
         pdf.insertRow(
             '{0} _______________________________________________________ {1}'.
-            format(datetime.datetime.now().strftime('%Y.%m.%d'), self.employee.short_full_name()),
+            format(datetime.datetime.now().strftime('%Y.%m.%d'), self.object.short_full_name()),
             'center',
             lineBreak=False
         )

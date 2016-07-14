@@ -1,5 +1,9 @@
 {% extends 'layouts/auth.html' %}
 
+{% load staticfiles %}
+
+{% block title %}Авторизация{% endblock %}
+
 {% block content %}
     <style>
         body {
@@ -34,6 +38,8 @@
     </style>
 
     <div class="container">
+
+{#        <img class="center img-thumbnail" src="{% static 'img/login.png' %}" alt="">#}
 
         <form class="form-signin" method="post" action="{% url 'login' %}">
             {% csrf_token %}

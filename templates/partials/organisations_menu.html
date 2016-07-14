@@ -1,6 +1,6 @@
 {% for item in menu %}
     <li>
-        <a href="{% url 'employee:list' pk=item.pk %}">
+        <a href="{% url 'enterprise:detail' item.pk %}">
             <span class="fa fa-institution"> </span>
             {{ item.title }}
             <span class="fa arrow"></span>
@@ -9,7 +9,7 @@
             <ul class="nav nav-third-level">
                 {% for subordinate in item.subordinates.all %}
                     <li>
-                        <a href="{% url 'employee:list' pk=subordinate.pk %}">
+                        <a href="{% url 'enterprise:detail' subordinate.pk %}">
                             <span class="fa fa-code-fork"> </span>
                             {{ subordinate.title }}
                         </a>
@@ -17,7 +17,7 @@
                             <ul class="nav nav-fourth-level">
                                 {% for sub in subordinate.subordinates.all %}
                                     <li>
-                                        <a href="{% url 'employee:list' pk=sub.pk %}">
+                                        <a href="{% url 'enterprise:detail' sub.pk %}">
                                             <span class="fa fa-building-o"> </span>
                                             {{ sub.title }}
                                         </a>
