@@ -2,7 +2,7 @@ from django import forms
 
 from equipment.models import Equipment
 from .models.equipment_types import EquipmentTypes
-from employee.models.employee import Employee
+from enterprise.models.employee import Employee
 
 
 class EmployeeCollectionChoice():

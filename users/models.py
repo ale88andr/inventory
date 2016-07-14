@@ -1,9 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-from django.http import request
 
-from employee.models import Organisation
+from enterprise.models import Organisation
 
 
 class UserManager(BaseUserManager):
@@ -37,7 +36,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         'Электронная почта',
         max_length=255,
         unique=True,
-        null=True,
         blank=True
     )
     username = models.CharField(
@@ -107,7 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['organisation', ]
 
     objects = UserManager()
 

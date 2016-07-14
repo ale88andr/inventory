@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from employee.views import Dashboard, EmployeesView, EmployeeView
+from enterprise.views import Dashboard, EmployeesView, EmployeeView
 
 urlpatterns = (
     url(r'^v1/$', Dashboard.as_view(), name='dashboard'),

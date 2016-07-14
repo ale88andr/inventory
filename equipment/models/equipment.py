@@ -5,7 +5,7 @@ from itertools import chain
 from django.utils import timezone
 from django.db import models
 from equipment.models.equipment_types import EquipmentTypes
-from employee.models.employee import Employee
+from enterprise.models.employee import Employee
 
 
 class EquipmentsManager(models.Manager):
@@ -24,13 +24,11 @@ class Equipment(models.Model):
     serial_number = models.CharField(
         'Серийный номер',
         max_length=25,
-        null=True,
         blank=True,
         help_text='Заводской номер оборудования, может содержать цифры и символы, допускается его отсутствие'
     )
     inventory_number = models.IntegerField(
         'Инвентарный номер',
-        null=True,
         blank=True,
         help_text='Инвентарный номер оборудования, допускаются только цифровые идентификаторы'
     )
@@ -47,7 +45,6 @@ class Equipment(models.Model):
     note = models.TextField(
         'Примечание',
         blank=True,
-        null=True
     )
     created_at = models.DateTimeField(
         'Созданно',
@@ -63,6 +60,8 @@ class Equipment(models.Model):
         null=True,
         help_text='Дата проведения последней ревизии'
     )
+
+    objects = EquipmentsManager()
 
     def generate_qrcode(self, pdf=False):
         qr = qrcode.QRCode(
@@ -89,9 +88,9 @@ class Equipment(models.Model):
         date_diff = timezone.now() - self.revised_at
 
         if date_diff.days == 0:
-            return '~ %i ч. назад' % round(date_diff.seconds / 3600)
+            return '~ {0} ч. назад'.format(round(date_diff.seconds / 3600))
 
-        return '%s дн. назад' % date_diff.days
+        return '{0} дн. назад'.format(date_diff.days)
 
     @staticmethod
     def all():
@@ -100,8 +99,8 @@ class Equipment(models.Model):
         ).all()
 
     @staticmethod
-    def get(entity_id):
-        return Equipment.objects.get(id=entity_id)
+    def get(id):
+        return Equipment.objects.get(id=id)
 
     @staticmethod
     def search_ng(text):
@@ -124,6 +123,3 @@ class Equipment(models.Model):
         verbose_name_plural = 'Учётные единицы'
         app_label = 'equipment'
         ordering = ['-created_at']
-
-    objects = EquipmentsManager()
-

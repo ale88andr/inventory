@@ -22,7 +22,7 @@ DJANGO_APP = [
 ]
 
 LOCAL_APPS = [
-    'employee',
+    'enterprise',
     'equipment',
     'reports',
     'users',

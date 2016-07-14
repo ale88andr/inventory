@@ -3,7 +3,7 @@ import datetime
 from django.db.models import Count
 from django.views.generic import TemplateView
 
-from employee.models import Employee, Organisation
+from enterprise.models import Employee, Organisation
 from equipment.models import Equipment
 from reports.models import XLS, PDF
 

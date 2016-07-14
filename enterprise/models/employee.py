@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.db import models
-from employee.models.organisation import Organisation
-from employee.models.location import Location
-from employee.models.departments import Department
+from enterprise.models.organisation import Organisation
+from enterprise.models.location import Location
+from enterprise.models.departments import Department
 
 
 class Employee(models.Model):
@@ -31,7 +31,7 @@ class Employee(models.Model):
     middlename = models.CharField(_('Отчество'), max_length=25)
     organisation = models.ForeignKey(Organisation, verbose_name='Сотрудник организации')
     department = models.ForeignKey(Department, verbose_name='Подразделение', blank=True, null=True)
-    phone = models.CharField(_('Телефон'), max_length=25, blank=True, null=True)
+    phone = models.CharField(_('Телефон'), max_length=25, blank=True)
     location = models.ForeignKey(Location, verbose_name='Месторасположение', blank=True, null=True)
     updated_at = models.DateTimeField(_('Дата последнего изменения'), auto_now=True)
     created_at = models.DateTimeField(_('Дата создания'), auto_now_add=True)
@@ -39,14 +39,16 @@ class Employee(models.Model):
     position = models.IntegerField(_('Должность'), choices=POSITIONS, default=1)
 
     def full_name(self):
-        return '%s %s %s' % (self.surname, self.firstname, self.middlename)
+        return '{0} {1} {2}'.format(self.surname, self.firstname, self.middlename)
 
     def short_full_name(self):
-        return '%s %s. %s.' % (self.surname, self.firstname[:1], self.middlename[:1])
+        return '{0} {1}. {2}.'.format(self.surname, self.firstname[:1], self.middlename[:1])
 
     def info(self):
-        return '%s(%s, %s)' % (
-            self.full_name(), self.organisation.title, (self.location.emplacement if self.location else '')
+        return '{0}({1}, {2})'.format(
+            self.full_name(),
+            self.organisation.title,
+            (self.location.emplacement if self.location else '')
         )
 
     @staticmethod
@@ -64,4 +66,4 @@ class Employee(models.Model):
         verbose_name = _('Сотрудник')
         verbose_name_plural = _('Сотрудники')
         ordering = ['id']
-        app_label = 'employee'
+        app_label = 'enterprise'

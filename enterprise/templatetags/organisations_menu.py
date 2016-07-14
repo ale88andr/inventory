@@ -1,5 +1,5 @@
 from django import template
-from employee.models.organisation import Organisation
+from enterprise.models.organisation import Organisation
 register = template.Library()
 
 

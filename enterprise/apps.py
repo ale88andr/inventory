@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class EmployeeConfig(AppConfig):
-    name = 'employee'
+class EnterpriseConfig(AppConfig):
+    name = 'enterprise'
     verbose_name = 'Организация и сотрудники'

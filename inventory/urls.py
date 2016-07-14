@@ -2,11 +2,11 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 
-from employee.views import Dashboard
+from enterprise.views import Dashboard
 
 urlpatterns = [
     url(r'^backend/', include(admin.site.urls)),
-    url(r'^enterprise/', include('employee.urls', namespace='employee')),
+    url(r'^enterprise/', include('enterprise.urls', namespace='employee')),
     url(r'^equipments/', include('equipment.urls', namespace='equipment')),
     url(r'^reports/', include('reports.urls')),
     url(r'^events/', include('events.urls', namespace='events')),

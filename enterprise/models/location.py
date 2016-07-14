@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext as _
 from django.db import models
 
-from employee.models.organisation import Organisation
+from enterprise.models.organisation import Organisation
 
 
 class LocationAnnotations(models.Manager):
@@ -23,4 +23,4 @@ class Location(models.Model):
     class Meta:
         verbose_name = _('Месторасположение')
         verbose_name_plural = _('Месторасположения')
-        app_label = 'employee'
+        app_label = 'enterprise'

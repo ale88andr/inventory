@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, DetailView, FormView, UpdateView
 
-from employee.models import Location
+from enterprise.models import Location
 from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
 from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm
