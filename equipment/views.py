@@ -1,14 +1,10 @@
 # coding=utf-8
 import csv
 import json
-from collections import namedtuple
 
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.generic import ListView, TemplateView, DetailView, UpdateView, FormView
@@ -30,7 +26,7 @@ class EquipmentFormMixin(object):
             'search': search
         }
 
-    def page(self):
+    def meta(self):
         """Returns a dictionary of page properties"""
         title = 'Оборудование на баллансе'
         return {
@@ -107,7 +103,7 @@ class EquipmentTypeMixin(object):
             'count': selection.count()
         }
 
-    def page(self):
+    def meta(self):
         """Returns a dictionary of page properties"""
         title = 'Оборудование: {0}'.format(self.object.value)
         return {
@@ -150,7 +146,7 @@ class EquipmentLocationsView(TemplateView):
             'selection': selection
         }
 
-    def page(self):
+    def meta(self):
         return {
             'title': 'Распределение оборудования по месторасположению'
         }
@@ -167,7 +163,7 @@ class EquipmentEmplacementMixin(object):
             'count': selection.count()
         }
 
-    def page(self):
+    def meta(self):
         """Returns a dictionary of page properties"""
         title = 'Месторасположение:  {0}'.format(self.object.emplacement)
         return {
@@ -210,7 +206,7 @@ class EquipmentChownMixin(object):
             'edit': edit,
         }
 
-    def page(self):
+    def meta(self):
         """Returns a dictionary of page properties"""
         title = 'Передача оборудования: {0}'.format(self.object.model)
         return {
@@ -282,7 +278,3 @@ class EquipmentReviseView(FormView):
             content_type="application/json",
             status=400
         )
-
-# @method_decorator(login_required, name='dispatch')
-# class EquipmentReviseConfirmView(TemplateView):
-#     template_name = 'equipment/revise_transitional.html'

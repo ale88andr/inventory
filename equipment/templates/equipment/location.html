@@ -1,12 +1,12 @@
 {% extends 'layouts/application.html' %}
 
-{% block title %}{{ view.page.title }} ({{ view.equipments.count }}){% endblock %}
+{% block title %}{{ view.meta.title }} ({{ view.equipments.count }}){% endblock %}
 
 {% block content %}
     <div class="row">
         <h3 class="page-header text-muted">
             <i class="fa fa-location-arrow fa-fw"></i>
-            {{ view.page.title }} <span class="badge">{{ view.equipments.count }}</span>
+            {{ view.meta.title }} <span class="badge">{{ view.equipments.count }}</span>
         </h3>
         <!-- equipment type list table -->
         {% include 'equipment/partials/_location_list.html' %}
