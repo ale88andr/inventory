@@ -71,7 +71,7 @@ class Equipment(models.Model):
             border=0,
         )
         qr_data = {'model': self.model, 'in': self.inventory_number, 'sn': self.serial_number}
-        qr.add_data('{model} IN:{in} S/N:{sn}'.format(**qr_data))
+        qr.add_data('{model}, IN:{in}, S/N:{sn}'.format(**qr_data))
         qr.make(fit=True)
 
         img = qr.make_image()

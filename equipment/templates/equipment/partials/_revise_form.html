@@ -1,0 +1,11 @@
+<form id="revise-form" action="" class="form-upload" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="file-upload" data-text="Выберите файл">
+            {{ field }}
+        </div>
+        <div id="error-file" class="text-danger text-center"></div>
+        <br>
+        <input type="submit" class="center-block btn btn-success" value="Обработать файл ревизии">
+    {% endfor %}
+</form>

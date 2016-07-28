@@ -76,3 +76,9 @@ class EquipmentChownForm(forms.ModelForm, EmployeeCollectionChoice):
     class Meta:
         model = Equipment
         fields = ('responsible', )
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField(
+        # widget=forms.FileInput(attrs={'data-text': 'Выберите файл'})
+    )

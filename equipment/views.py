@@ -1,13 +1,22 @@
+# coding=utf-8
+import csv
+import json
+from collections import namedtuple
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.core import serializers
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.generic import ListView, TemplateView, DetailView, UpdateView
+from django.views.generic import ListView, TemplateView, DetailView, UpdateView, FormView
 
 from enterprise.models import Location
 from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
-from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm
+from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm, UploadFileForm
 
 
 class EquipmentFormMixin(object):
@@ -92,10 +101,10 @@ class EquipmentTypeMixin(object):
     @cached_property
     def equipments(self):
         """Returns a dictionary of type equipments"""
-        set = self.object.equipment_set
+        selection = self.object.equipment_set
         return {
-            'set': set.all(),
-            'count': set.count()
+            'selection': selection.all(),
+            'count': selection.count()
         }
 
     def page(self):
@@ -216,3 +225,64 @@ class EquipmentChownView(UpdateView, EquipmentChownMixin):
     context_object_name = 'equipment'
     fields = ['responsible']
     success_url = '/equipments/'
+
+
+# @method_decorator(login_required, name='dispatch')
+class EquipmentReviseView(FormView):
+    form_class = UploadFileForm
+    template_name = 'equipment/revise.html'
+    # success_url = reverse_lazy('equipment:revise_confirmation')
+
+    def page(self):
+        return {
+            'title': 'Создание новой ревизии'
+        }
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            form = UploadFileForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                file = form.cleaned_data['file']
+                file_extension = file.name.split('.')[-1]
+
+                if file_extension is not 'csv' or file.content_type is not 'application/vnd.ms-excel':
+                    form.add_error('file', 'Загруженный файл имеет неправильный формат.')
+
+                file = request.FILES['file'].read().decode().splitlines()
+                revise = csv.DictReader(file, delimiter=';', dialect=csv.excel_tab)
+
+                # Qrdata = namedtuple('Qrdata', ['model', 'iventory_number', 'serial_number', 'revised_at'])
+
+                data = []
+
+                try:
+                    for row in revise:
+                        model, i_number, s_number = row.get('QR_DATA').split(', ')
+                        data.append({
+                            'model': model,
+                            'inventory_number': i_number.split(':')[-1],
+                            'serial_number': s_number.split(':')[-1],
+                            'revised_at': row.get('DATE')
+                        })
+                        # qr_data = (model, i_number.split(':')[-1], s_number.split(':')[-1], row.get('DATE'))
+                        # self.data.append(Qrdata._make(qr_data)._asdict())
+                except(ValueError, KeyError):
+                    form.add_error('file', 'Загруженный файл ревизии имеет неправильную структуру')
+
+                return HttpResponse(
+                    json.dumps(data),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps({"errors": form.errors}),
+                    content_type="application/json",
+                    status=400
+                )
+
+
+# @method_decorator(login_required, name='dispatch')
+# class EquipmentReviseConfirmView(TemplateView):
+#     template_name = 'equipment/revise_transitional.html'

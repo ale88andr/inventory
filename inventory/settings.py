@@ -30,7 +30,7 @@ LOCAL_APPS = [
 ]
 
 DJANGO_PACKAGES = [
-    'debug_toolbar'
+    # 'debug_toolbar'
 ]
 
 INSTALLED_APPS = DJANGO_APP + LOCAL_APPS + DJANGO_PACKAGES

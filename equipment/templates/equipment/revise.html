@@ -1,0 +1,20 @@
+{% extends 'layouts/application.html' %}
+
+{% load static %}
+
+{% block title %}{{ view.page.title }}{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript" defer src="{% static 'js/helpers/form.js' %}"></script>
+    <script type="text/javascript" defer src="{% static 'js/revise/main.js' %}"></script>
+
+    <div class="row">
+        <h3 class="page-header">
+            <i class="fa fa-hdd-o fa-fw"></i>
+            {{ view.page.title }}
+        </h3>
+        {% include 'equipment/partials/_revise_form.html' %}
+        <div id="revise-data-list" class="container"></div>
+    </div>
+{% endblock %}
