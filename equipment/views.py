@@ -1,14 +1,12 @@
 # coding=utf-8
 import csv
 import json
-
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.generic import ListView, TemplateView, DetailView, UpdateView, FormView
-
+from django.views.generic import ListView, TemplateView, DetailView, UpdateView, FormView, RedirectView
 from enterprise.models import Location
 from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
@@ -16,7 +14,6 @@ from .forms import EquipmentFilterForm, EquipmentSearchForm, EquipmentChownForm,
 
 
 class EquipmentFormMixin(object):
-
     def forms(self):
         """Returns a dictionary of filter and search form object"""
         filter = self.filter_form
@@ -93,7 +90,6 @@ class EquipmentTypesView(TemplateView):
 
 
 class EquipmentTypeMixin(object):
-
     @cached_property
     def equipments(self):
         """Returns a dictionary of type equipments"""
@@ -153,7 +149,6 @@ class EquipmentLocationsView(TemplateView):
 
 
 class EquipmentEmplacementMixin(object):
-
     @cached_property
     def equipments(self):
         """Returns a dictionary of equipments by location"""
@@ -198,7 +193,6 @@ class EquipmentEmplacementView(DetailView, EquipmentEmplacementMixin):
 
 
 class EquipmentChownMixin(object):
-
     def forms(self):
         """Returns a dictionary of edit form object"""
         edit = EquipmentChownForm
@@ -242,7 +236,8 @@ class EquipmentReviseView(FormView):
                 file = form.cleaned_data['file']
                 file_extension = file.name.split('.')[-1]
 
-                if file_extension is not 'csv' or file.content_type is not 'application/vnd.ms-excel':
+                if file.content_type != 'application/vnd.ms-excel':
+                    print(file.content_type)
                     form.add_error('file', 'Загруженный файл имеет неправильный формат.')
                     return EquipmentReviseView._send_invalid_response_for_form(form.errors)
 
@@ -251,8 +246,8 @@ class EquipmentReviseView(FormView):
 
                 data = []
 
-                try:
-                    for row in revise:
+                for idx, row in enumerate(revise):
+                    try:
                         model, i_number, s_number = row.get('QR_DATA').split(', ')
                         data.append({
                             'model': model,
@@ -260,9 +255,13 @@ class EquipmentReviseView(FormView):
                             'serial_number': s_number.split(':')[-1],
                             'revised_at': row.get('DATE')
                         })
-                except(ValueError, KeyError):
-                    form.add_error('file', 'Загруженный файл ревизии имеет неправильную структуру')
-                    return EquipmentReviseView._send_invalid_response_for_form(form.errors)
+                    except KeyError:
+                        form.add_error('file', 'Загруженный файл ревизии имеет неправильную структуру')
+                        return EquipmentReviseView._send_invalid_response_for_form(form.errors)
+                    except ValueError:
+                        form.add_error('file', 'Строка {0} "{1}" имеет неправильный формат!'.format(idx + 2,
+                                                                                                    row.get('QR_DATA')))
+                        return EquipmentReviseView._send_invalid_response_for_form(form.errors)
 
                 return HttpResponse(
                     json.dumps(data),
@@ -278,3 +277,8 @@ class EquipmentReviseView(FormView):
             content_type="application/json",
             status=400
         )
+
+
+class EquipmentReviseUpdate(RedirectView):
+    def post(self, request, *args, **kwargs):
+        print(kwargs)

@@ -22,7 +22,7 @@ function loadReviseCsvData(data) {
 
     $(document.createElement('h3')).addClass('text-success').text('Данные загруженные из файла ревизии:').appendTo(reviseDiv);
 
-    var reviseForm = $(document.createElement('form')).attr({'method': 'post', 'action': '/equipments/revise/update'});
+    var reviseForm = $(document.createElement('form')).attr({'method': 'post', 'action': '/revise/update'});
     var reviseTable = $(document.createElement('table')).addClass('table table-hover table-striped');
 
     reviseTable.html("<thead><tr>" +
