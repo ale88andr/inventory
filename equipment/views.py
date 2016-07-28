@@ -227,13 +227,12 @@ class EquipmentChownView(UpdateView, EquipmentChownMixin):
     success_url = '/equipments/'
 
 
-# @method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class EquipmentReviseView(FormView):
     form_class = UploadFileForm
     template_name = 'equipment/revise.html'
-    # success_url = reverse_lazy('equipment:revise_confirmation')
 
-    def page(self):
+    def meta(self):
         return {
             'title': 'Создание новой ревизии'
         }
@@ -249,11 +248,10 @@ class EquipmentReviseView(FormView):
 
                 if file_extension is not 'csv' or file.content_type is not 'application/vnd.ms-excel':
                     form.add_error('file', 'Загруженный файл имеет неправильный формат.')
+                    return EquipmentReviseView._send_invalid_response_for_form(form.errors)
 
                 file = request.FILES['file'].read().decode().splitlines()
                 revise = csv.DictReader(file, delimiter=';', dialect=csv.excel_tab)
-
-                # Qrdata = namedtuple('Qrdata', ['model', 'iventory_number', 'serial_number', 'revised_at'])
 
                 data = []
 
@@ -266,22 +264,24 @@ class EquipmentReviseView(FormView):
                             'serial_number': s_number.split(':')[-1],
                             'revised_at': row.get('DATE')
                         })
-                        # qr_data = (model, i_number.split(':')[-1], s_number.split(':')[-1], row.get('DATE'))
-                        # self.data.append(Qrdata._make(qr_data)._asdict())
                 except(ValueError, KeyError):
                     form.add_error('file', 'Загруженный файл ревизии имеет неправильную структуру')
+                    return EquipmentReviseView._send_invalid_response_for_form(form.errors)
 
                 return HttpResponse(
                     json.dumps(data),
                     content_type="application/json"
                 )
             else:
-                return HttpResponse(
-                    json.dumps({"errors": form.errors}),
-                    content_type="application/json",
-                    status=400
-                )
+                return EquipmentReviseView._send_invalid_response_for_form(form.errors)
 
+    @staticmethod
+    def _send_invalid_response_for_form(form_errors):
+        return HttpResponse(
+            json.dumps({"errors": form_errors}),
+            content_type="application/json",
+            status=400
+        )
 
 # @method_decorator(login_required, name='dispatch')
 # class EquipmentReviseConfirmView(TemplateView):

@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}{{ view.page.title }}{% endblock %}
+{% block title %}{{ view.meta.title }}{% endblock %}
 
 {% block content %}
 
@@ -12,7 +12,7 @@
     <div class="row">
         <h3 class="page-header">
             <i class="fa fa-hdd-o fa-fw"></i>
-            {{ view.page.title }}
+            {{ view.meta.title }}
         </h3>
         {% include 'equipment/partials/_revise_form.html' %}
         <div id="revise-data-list" class="container"></div>
