@@ -1,9 +1,14 @@
 import base64
+from datetime import datetime
+
 import qrcode
 from io import BytesIO
 from itertools import chain
 from django.utils import timezone
 from django.db import models
+from django.utils.timezone import localtime, get_current_timezone
+from django.db import transaction
+
 from equipment.models.equipment_types import EquipmentTypes
 from enterprise.models.employee import Employee
 
@@ -91,6 +96,26 @@ class Equipment(models.Model):
             return '~ {0} ч. назад'.format(round(date_diff.seconds / 3600))
 
         return '{0} дн. назад'.format(date_diff.days)
+
+    @staticmethod
+    @transaction.atomic
+    def update_equipments_revise(revise_equipments):
+
+        for equipment in revise_equipments:
+            inventory, serial, revised_at = equipment.split(';')
+            revised_at = datetime.strptime(revised_at, '%d.%m.%Y %H:%M')
+            equipments = Equipment.objects.all()
+
+            if inventory == 'None':
+                equipment_object = equipments.filter(serial_number=serial).first()
+            else:
+                equipment_object = equipments.filter(inventory_number=inventory).first()
+
+            if localtime(equipment_object.revised_at) == revised_at.replace(tzinfo=get_current_timezone()):
+                break
+
+            equipment_object.revised_at = revised_at
+            equipment_object.save()
 
     @staticmethod
     def all():

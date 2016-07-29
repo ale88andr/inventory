@@ -46,8 +46,13 @@
         </nav>
 
         <div id="page-wrapper">
+            {% if messages %}
+                {% include 'partials/messages.html' %}
+            {% endif %}
+
             {% block dashboard %}
             {% endblock %}
+
             <div class="class">
                 {% block content %}
                 {% endblock %}

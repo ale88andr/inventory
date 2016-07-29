@@ -22,7 +22,7 @@ function loadReviseCsvData(data) {
 
     $(document.createElement('h3')).addClass('text-success').text('Данные загруженные из файла ревизии:').appendTo(reviseDiv);
 
-    var reviseForm = $(document.createElement('form')).attr({'method': 'post', 'action': '/revise/update'});
+    var reviseForm = $(document.createElement('form')).attr({'method': 'post', 'action': '/equipments/revise/update/'});
     var reviseTable = $(document.createElement('table')).addClass('table table-hover table-striped');
 
     reviseTable.html("<thead><tr>" +
@@ -39,15 +39,15 @@ function loadReviseCsvData(data) {
         // model tab
         $(document.createElement('td')).html('<b>' + item.model + '</b>').appendTo(row);
 
-        var invNum = item.inventory_number == 'None' ? '' : item.inventory_number;
+        var invNum = item.inventory_number == 'None' ? 'Не имеет' : item.inventory_number;
 
         // inventory number tab
-        $(document.createElement('td')).addClass('text-primary').text(invNum || 'Не имеет').appendTo(row);
+        $(document.createElement('td')).addClass('text-primary').text(invNum).appendTo(row);
 
-        var serialNum = item.serial_number == 'None' ? '' : item.serial_number;
+        var serialNum = item.serial_number == 'None' ? 'Не имеет' : item.serial_number;
 
         // serial number tab
-        $(document.createElement('td')).text(serialNum || 'Не имеет').appendTo(row);
+        $(document.createElement('td')).text(serialNum).appendTo(row);
 
         // revised date tab
         $(document.createElement('td')).text(item.revised_at).appendTo(row);
@@ -61,8 +61,8 @@ function loadReviseCsvData(data) {
         $(document.createElement('input'))
             .attr({
                 'type': 'hidden',
-                'name': 'data[' + key + ']',
-                'value': [invNum, serialNum, item.revised_at].join(';')
+                'name': 'data',
+                'value': [item.inventory_number, item.serial_number, item.revised_at].join(';')
             })
             .appendTo(row);
 
@@ -70,6 +70,8 @@ function loadReviseCsvData(data) {
     });
 
     reviseTable.appendTo(reviseForm);
+
+    $('input[name="csrfmiddlewaretoken"]').appendTo(reviseForm);
 
     $(document.createElement('input'))
         .attr({'type': 'submit', 'value': 'Применить ревизию'})

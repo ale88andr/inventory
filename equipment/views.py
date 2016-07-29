@@ -1,8 +1,11 @@
 # coding=utf-8
 import csv
 import json
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.db import Error
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -234,7 +237,6 @@ class EquipmentReviseView(FormView):
 
             if form.is_valid():
                 file = form.cleaned_data['file']
-                file_extension = file.name.split('.')[-1]
 
                 if file.content_type != 'application/vnd.ms-excel':
                     print(file.content_type)
@@ -280,5 +282,16 @@ class EquipmentReviseView(FormView):
 
 
 class EquipmentReviseUpdate(RedirectView):
+    url = '/'
+    success_message = 'Данные из файла ревизии обработанны! Количество обновленных записей - {0}'
+
     def post(self, request, *args, **kwargs):
-        print(kwargs)
+
+        if 'data' in request.POST:
+            revise_equipments = request.POST.getlist('data')
+            try:
+                Equipment.update_equipments_revise(revise_equipments)
+                messages.success(request, self.success_message.format(len(revise_equipments)))
+                return HttpResponseRedirect(self.url)
+            except Error:
+                return HttpResponseServerError()
