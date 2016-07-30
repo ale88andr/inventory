@@ -1,9 +1,9 @@
-__version__ = '0.4.3 alpha'
+__version__ = '0.5.2 beta'
 __appname__ = 'Инвентаризация ПФР'
 
 
-def appname(request):
-    return {'appname': __appname__}
+def app_name(request):
+    return {'app_name': __appname__}
 
 
 def app_version(request):

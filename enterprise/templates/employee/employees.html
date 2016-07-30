@@ -1,7 +1,8 @@
 {% extends 'layouts/application.html' %}
 
-{% block title %}{{ view.page.title }}{% endblock %}
+{% block title %}{{ view.meta.title }}{% endblock %}
 
 {% block dashboard %}
-    {% include 'partials/dashboard.html' %}
+    {% include 'partials/dashboard/dashboard.html' %}
+    {% include 'partials/dashboard/revise.html' %}
 {% endblock %}

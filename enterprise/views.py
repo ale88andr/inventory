@@ -25,7 +25,15 @@ class DashboardMixin(object):
             'count': selection.count()
         }
 
-    def page(self):
+    @cached_property
+    def revised(self):
+        selection = Equipment.all()
+        return {
+            'latest': selection.order_by('-revised_at')[:5],
+            'older': selection.order_by('revised_at')[:5]
+        }
+
+    def meta(self):
         return {
             'title': 'Инвентаризация оборудования'
         }

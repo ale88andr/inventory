@@ -115,7 +115,7 @@ class Equipment(models.Model):
                 break
 
             equipment_object.revised_at = revised_at
-            equipment_object.save()
+            equipment_object.save(update_fields=['revised_at'])
 
     @staticmethod
     def all():

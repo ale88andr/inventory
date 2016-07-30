@@ -1,0 +1,24 @@
+<table class="table table-hover table-striped small">
+    <thead>
+        <tr>
+            <th>Тип:</th>
+            <th><b>Оборудование</b></th>
+            <th>Дата ревизии</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in selection %}
+            <tr>
+                <td>
+                    {{ item.type }}
+                </td>
+                <td>
+                    <b>{{ item.model }}</b>
+                </td>
+                <td class="text-primary">
+                    {{ item.revised_diff }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
