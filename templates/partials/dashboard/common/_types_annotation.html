@@ -1,0 +1,22 @@
+<table class="table table-hover table-striped small">
+    <thead>
+        <tr>
+            <th>Тип оборудования:</th>
+            <th class="danger text-center">Количество:</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in selection %}
+            <tr>
+                <td>
+                    <b>{{ item.value }}</b>
+                </td>
+                <td class="danger text-center">
+                    <b>{{ item.types_count }}</b>
+                </td>
+            </tr>
+        {% empty %}
+            <p class="text-danger">Нет данных!</p>
+        {% endfor %}
+    </tbody>
+</table>

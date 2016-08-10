@@ -18,6 +18,12 @@ class EquipmentsManager(models.Manager):
     def by_type(self, type_pk):
         return self.filter(type=type_pk)
 
+    def unused(self):
+        return self.filter(is_used=False)
+
+    def in_repair(self):
+        return self.filter(is_repair=True)
+
 
 class Equipment(models.Model):
 
@@ -35,6 +41,7 @@ class Equipment(models.Model):
     inventory_number = models.IntegerField(
         'Инвентарный номер',
         blank=True,
+        null=True,
         help_text='Инвентарный номер оборудования, допускаются только цифровые идентификаторы'
     )
     model = models.CharField(
@@ -44,6 +51,8 @@ class Equipment(models.Model):
     )
     responsible = models.ForeignKey(
         Employee,
+        blank=True,
+        null=True,
         verbose_name='Ответственное лицо',
         help_text='Сотрудник ПФР за которым закрепленна техника'
     )
@@ -64,6 +73,14 @@ class Equipment(models.Model):
         blank=True,
         null=True,
         help_text='Дата проведения последней ревизии'
+    )
+    is_used = models.BooleanField(
+        'Используется',
+        default=True
+    )
+    is_repair = models.BooleanField(
+        'В ремонте',
+        default=False
     )
 
     objects = EquipmentsManager()
@@ -93,7 +110,10 @@ class Equipment(models.Model):
         date_diff = timezone.now() - self.revised_at
 
         if date_diff.days == 0:
-            return '~ {0} ч. назад'.format(round(date_diff.seconds / 3600))
+            hours = round(date_diff.seconds / 3600)
+            if hours < 1:
+                return '{0} мин. назад'.format(round(date_diff.seconds / 60))
+            return '~ {0} ч. назад'.format(hours)
 
         return '{0} дн. назад'.format(date_diff.days)
 

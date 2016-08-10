@@ -1,5 +1,5 @@
 __version__ = '0.5.2 beta'
-__appname__ = 'Инвентаризация ПФР'
+__appname__ = 'Инвентаризация'
 
 
 def app_name(request):

@@ -1,5 +1,4 @@
 from django import template
-from django.db.models import Count
 from equipment.models.equipment_types import EquipmentTypes
 register = template.Library()
 

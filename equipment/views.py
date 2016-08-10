@@ -295,3 +295,16 @@ class EquipmentReviseUpdate(RedirectView):
                 return HttpResponseRedirect(self.url)
             except Error:
                 return HttpResponseServerError()
+
+
+class EquipmentsUnusedView(ListView):
+    template_name = 'equipment/unused.html'
+    model = Equipment
+    queryset = Equipment.objects.unused()
+    context_object_name = 'unused_equipments'
+    page_title = 'Неиспользуемое оборудование'
+
+    def meta(self):
+        return {
+            'title': '{0} ({1})'.format(self.page_title, self.queryset.count())
+        }

@@ -6,7 +6,6 @@ from enterprise.models.employee import Employee
 
 
 class EmployeeCollectionChoice():
-
     employees = [(c.id, c.short_full_name()) for c in Employee.all()]
     employee_choices = tuple(employees) + ((None, '--- Ответственный ---'),)
 
@@ -67,8 +66,8 @@ class EquipmentSearchForm(forms.Form):
 
 class EquipmentChownForm(forms.ModelForm, EmployeeCollectionChoice):
 
-    responsible = forms.ChoiceField(
-        choices=EmployeeCollectionChoice.employee_choices,
+    responsible = forms.ModelChoiceField(
+        queryset=EmployeeCollectionChoice.employee_choices,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
@@ -79,6 +78,4 @@ class EquipmentChownForm(forms.ModelForm, EmployeeCollectionChoice):
 
 
 class UploadFileForm(forms.Form):
-    file = forms.FileField(
-        # widget=forms.FileInput(attrs={'data-text': 'Выберите файл'})
-    )
+    file = forms.FileField()

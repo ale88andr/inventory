@@ -1,0 +1,56 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.meta.title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h4 class="page-header text-muted">
+                <i class="fa fa-plug fa-fw"></i>
+                {{ view.meta.title }}
+            </h4>
+            <table class="table table-responsive table-bordered">
+                <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Модель</th>
+                        <th>Инвентарный №</th>
+                        <th>Серийный №</th>
+                        <th>Статус</th>
+                        <th>Ответственный</th>
+                        <th>Месторасположение</th>
+                        <th>Дата ревизии</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in unused_equipments %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'equipment:type' item.type_id %}">{{ item.type }}</a>
+                            </td>
+                            <td>{{ item.model }}</td>
+                            <td>{{ item.inventory_number }}</td>
+                            <td>{{ item.serial_number }}</td>
+                            <td>
+                                <span class="label label-info">
+                                    {{ item.is_used|yesno:"Используется,Не используется" }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ item.responsible|default:'<span class="label label-warning">Не назначен</span>' }}
+                            </td>
+                            <td>
+                                {{ item.responsible.location|default:'<span class="label label-warning">Не установленно</span>' }}
+                            </td>
+                            <td>{{ item.revised_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- /.table -->
+            <p class="text-muted">
+                Всего не используется оборудования: <span class="badge">{{ unused_equipments|length }}</span> ед.
+            </p>
+        </div>
+    </div>
+{% endblock %}

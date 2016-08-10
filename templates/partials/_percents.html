@@ -1,0 +1,73 @@
+{% load equipments_counter %}
+
+{% counter as quantity %}
+<li>
+    <a href="{% url 'equipment:index' %}">
+        <div>
+            <p>
+                <strong>Используется: <span class="label label-success">{{ quantity.used }}</span></strong>
+                <span class="pull-right text-muted">{{ count_used }}%</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ count_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ count_used }}%">
+                    <span class="sr-only">{{ count_used }}%</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+<li class="divider"></li>
+<li>
+    <a href="{% url 'equipment:unused' %}">
+        <div>
+            <p>
+                <strong>Не используется: <span class="label label-warning">{{ quantity.unused }}</span></strong>
+                <span class="pull-right text-muted">{{ not_used }}%</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ not_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ not_used }}%">
+                    <span class="sr-only">{{ not_used }}%</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+<li class="divider"></li>
+<li>
+    <a href="#">
+        <div>
+            <p>
+                <strong>В ремонте: <span class="label label-danger">{{ quantity.repair }}</span></strong>
+                <span class="pull-right text-muted">{{ repaired }}%</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ repaired }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ repaired }}%">
+                    <span class="sr-only">{{ repaired }}%</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+<li class="divider"></li>
+<li>
+    <a href="#">
+        <div>
+            <p>
+                <strong>Без инвентарного номера: <span class="label label-default">{{ quantity.without_inventory }}</span></strong>
+                <span class="pull-right text-muted">{{ no_inventory }}%</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ no_inventory }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ no_inventory }}%">
+                    <span class="sr-only">{{ no_inventory }}%</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+<li class="divider"></li>
+<li>
+    <a class="text-center" href="{% url 'equipment:index' %}">
+        <strong>Оборудование</strong>
+        <i class="fa fa-angle-right"></i>
+    </a>
+</li>

@@ -5,7 +5,7 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView, DetailView
 
 from enterprise.models import Employee, Organisation
-from equipment.models import Equipment
+from equipment.models import Equipment, EquipmentTypes
 from reports.models import XLS, PDF
 
 
@@ -21,8 +21,20 @@ class DashboardMixin(object):
     @cached_property
     def equipments(self):
         selection = Equipment.all()
+        unused = selection.filter(is_used=False)
         return {
-            'count': selection.count()
+            'count': selection.exclude(is_used=False).count(),
+            'no_inventory': selection.filter(inventory_number=None),
+            'not_used': unused.count(),
+            'repaired': selection.filter(is_repair=True).count(),
+            'unused': unused
+        }
+
+    @cached_property
+    def types(self):
+        selection = EquipmentTypes.annotation.all()
+        return {
+            'annotation': selection
         }
 
     @cached_property

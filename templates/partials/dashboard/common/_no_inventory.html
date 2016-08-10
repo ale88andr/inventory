@@ -1,0 +1,26 @@
+<table class="table table-hover table-striped small">
+    <thead>
+        <tr>
+            <th class="info">Тип:</th>
+            <th><b>Оборудование</b></th>
+            <th class="warning">S/N</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in selection %}
+            <tr>
+                <td>
+                    {{ item.type }}
+                </td>
+                <td>
+                    <b>{{ item.model }}</b>
+                </td>
+                <td class="text-warning">
+                    {{ item.serial_number }}
+                </td>
+            </tr>
+        {% empty %}
+            <p class="text-danger">Такое оборудование отсутствует!</p>
+        {% endfor %}
+    </tbody>
+</table>

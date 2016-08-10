@@ -1,6 +1,6 @@
 reportlab
 Django==1.9.6
-Pillow==3.2.0
+Pillow==3.3.0
 qrcode==5.1
 six==1.10.0
 virtualenv==14.0.6

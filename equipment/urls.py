@@ -9,6 +9,7 @@ from equipment.views import (
     EquipmentChownView,
     EquipmentReviseView,
     EquipmentReviseUpdate,
+    EquipmentsUnusedView,
 )
 
 urlpatterns = (
@@ -20,4 +21,5 @@ urlpatterns = (
     url(r'(?P<pk>\d+)/chown/$', EquipmentChownView.as_view(), name='chown'),
     url(r'^revise/$', EquipmentReviseView.as_view(), name='revise'),
     url(r'^revise/update/$', EquipmentReviseUpdate.as_view(), name='revise_update'),
+    url(r'^unused/$', EquipmentsUnusedView.as_view(), name='unused')
 )

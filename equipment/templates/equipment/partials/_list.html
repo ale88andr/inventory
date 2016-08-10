@@ -1,6 +1,6 @@
 <!-- Equipment item -->
 <li class="equipment-li">
-    <div class="col-lg-3">
+    <div class="col-lg-2 col-md-3">
         <img class="img-responsive img-thumbnail center-block" width="120" height="120" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>
         {% if equipment.inventory_number %}
             <h4 class="text-center text-primary"><b># {{ equipment.inventory_number }}</b></h4>
@@ -10,7 +10,7 @@
             </p>
         {% endif %}
     </div>
-    <div class="col-lg-9">
+    <div class="col-lg-10 col-md-9">
         <div class="timeline-panel">
             <div class="timeline-heading">
                 <p>
@@ -23,7 +23,7 @@
                         S/N: {{ equipment.serial_number }}
                     </span>
                 <h4 class="timeline-title">
-                {{ equipment.model }}
+                <b>{{ equipment.model }}</b>
             </h4>
                 <p>
                     <small class="text-muted">
@@ -41,19 +41,33 @@
             </div>
             <div class="equipment-footer">
                 <p class="text-muted">
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-user fa-fw"></i>
                     Ответственный сотрудник:
-                    <span class="text-danger">
+                    <b class="text-danger">
                         {{ equipment.responsible.full_name }}
-                    </span>
+                    </b>
                 </p>
                 <p class="text-muted">
-                    <i class="fa fa-location-arrow"></i>
+                    <i class="fa fa-location-arrow fa-fw"></i>
                     Месторасположение:
-                    <span class="text-danger">
+                    <b class="text-danger">
                         {{ equipment.responsible.location }}
                         ({{ equipment.responsible.organisation.short_title|default:'' }})
-                    </span>
+                    </b>
+                </p>
+                <p>
+                    Используется/В ремонте:
+                    {% if equipment.is_used %}
+                        <span class="label label-success">Да</span>
+                    {% else %}
+                        <span class="label label-warning">Нет</span>
+                    {% endif %}
+                    /
+                    {% if equipment.is_repaired %}
+                        <span class="label label-danger">Отправлен в ремонт {{ equipment.updated_at }}</span>
+                    {% else %}
+                        <span class="label label-info">Не состоит</span>
+                    {% endif %}
                 </p>
                 {% include 'equipment/partials/_item_footer.html' %}
             </div>

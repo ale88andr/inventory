@@ -21,8 +21,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):
+    def create_superuser(self, username, password, organisation):
         user = self.create_user(username, password)
+        user.organisation = None
         user.is_superuser = True
         user.save(using=self._db)
         return user
@@ -56,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         Organisation,
         verbose_name='Сотрудник организации',
         null=True,
-        blank=True
+        blank=True,
     )
     ip = models.GenericIPAddressField(
         verbose_name='IP адрес',
