@@ -66,7 +66,7 @@
                     {% if equipment.is_repaired %}
                         <span class="label label-danger">Отправлен в ремонт {{ equipment.updated_at }}</span>
                     {% else %}
-                        <span class="label label-info">Не состоит</span>
+                        <span class="label label-success">Не состоит</span>
                     {% endif %}
                 </p>
                 {% include 'equipment/partials/_item_footer.html' %}
