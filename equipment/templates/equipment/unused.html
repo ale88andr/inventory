@@ -14,9 +14,10 @@
                     <tr>
                         <th>Тип</th>
                         <th>Модель</th>
+                        <th>Статус</th>
                         <th>Инвентарный №</th>
                         <th>Серийный №</th>
-                        <th>Статус</th>
+                        <th>Ремонт</th>
                         <th>Ответственный</th>
                         <th>Месторасположение</th>
                         <th>Дата ревизии</th>
@@ -29,12 +30,28 @@
                                 <a href="{% url 'equipment:type' item.type_id %}">{{ item.type }}</a>
                             </td>
                             <td>{{ item.model }}</td>
-                            <td>{{ item.inventory_number }}</td>
-                            <td>{{ item.serial_number }}</td>
                             <td>
-                                <span class="label label-info">
-                                    {{ item.is_used|yesno:"Используется,Не используется" }}
-                                </span>
+                                {% if item.is_used %}
+                                    <span class="text-success">
+                                        <i class="fa fa-check-circle fa-fw"></i>
+                                    </span>
+                                {% else %}
+                                    <span class="text-danger">
+                                        <i class="fa fa-close fa-fw"></i>
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item.inventory_number|default_if_none:'<span class="label label-danger">Не назначен</span>' }}
+                            </td>
+                            <td class="text-warning"><b>{{ item.serial_number }}</b></td>
+
+                            <td>
+                                {% if item.is_repair %}
+                                    <i class="fa fa-life-saver fa-fw"></i>
+                                {% else %}
+                                    <i class="fa fa-minus fa-fw"></i>
+                                {% endif %}
                             </td>
                             <td>
                                 {{ item.responsible|default:'<span class="label label-warning">Не назначен</span>' }}
@@ -44,12 +61,16 @@
                             </td>
                             <td>{{ item.revised_at }}</td>
                         </tr>
+                    {% empty %}
+                        <tr class="text-center text-primary">
+                            <td colspan="9">Данные по этому виду запроса отсутствуют!</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
             <!-- /.table -->
             <p class="text-muted">
-                Всего не используется оборудования: <span class="badge">{{ unused_equipments|length }}</span> ед.
+                Всего оборудования: <span class="badge">{{ unused_equipments|length }}</span> ед.
             </p>
         </div>
     </div>

@@ -297,12 +297,38 @@ class EquipmentReviseUpdate(RedirectView):
                 return HttpResponseServerError()
 
 
-class EquipmentsUnusedView(ListView):
+class EquipmentUnusedView(ListView):
     template_name = 'equipment/unused.html'
     model = Equipment
     queryset = Equipment.objects.unused()
     context_object_name = 'unused_equipments'
     page_title = 'Неиспользуемое оборудование'
+
+    def meta(self):
+        return {
+            'title': '{0} ({1})'.format(self.page_title, self.queryset.count())
+        }
+
+
+class EquipmentRepairView(ListView):
+    template_name = 'equipment/unused.html'
+    model = Equipment
+    queryset = Equipment.objects.in_repair()
+    context_object_name = 'unused_equipments'
+    page_title = 'Оборудование в ремонте'
+
+    def meta(self):
+        return {
+            'title': '{0} ({1})'.format(self.page_title, self.queryset.count())
+        }
+
+
+class EquipmentUnrecordedView(ListView):
+    template_name = 'equipment/unused.html'
+    model = Equipment
+    queryset = Equipment.objects.unrecorded()
+    context_object_name = 'unused_equipments'
+    page_title = 'Оборудование без инвентарного номера'
 
     def meta(self):
         return {

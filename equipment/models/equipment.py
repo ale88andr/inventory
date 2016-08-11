@@ -24,6 +24,9 @@ class EquipmentsManager(models.Manager):
     def in_repair(self):
         return self.filter(is_repair=True)
 
+    def unrecorded(self):
+        return self.filter(inventory_number=None)
+
 
 class Equipment(models.Model):
 
@@ -146,8 +149,8 @@ class Equipment(models.Model):
         return results
 
     @staticmethod
-    def get(id):
-        return Equipment.objects.get(id=id)
+    def get(equipment_id):
+        return Equipment.objects.get(id=equipment_id)
 
     @staticmethod
     def search_ng(text):

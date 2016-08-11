@@ -27,7 +27,7 @@
                     <span class="label label-primary pull-right">{{ equipments_counter.all }}</span>
                     <br>
                     <span class="label label-success pull-right">{{ equipments_counter.used }}</span>
-                    <span class="fa fa-arrow-down fa-fw">
+                    <span class="fa fa-fw">
                 </a>
                 <ul class="nav nav-second-level">
                     <li>
@@ -42,12 +42,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'equipment:locations' %}">
+                        <a href="{% url 'equipment:in_repair' %}">
                             В ремонте <span class="label label-danger pull-right">{{ equipments_counter.repair }}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'equipment:locations' %}">
+                        <a href="{% url 'equipment:unrecorded' %}">
                             Не учтённое <span class="label label-default pull-right">{{ equipments_counter.without_inventory }}</span>
                         </a>
                     </li>

@@ -12,7 +12,7 @@
             </h3>
             {% include 'equipment/partials/_filter.html' %}
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                         <i class="fa fa-tasks fa-fw"></i> Список инвентаризированной техники
@@ -38,10 +38,12 @@
         </div>
         <!-- /.col-lg-8 -->
 
-        {% include 'equipment/partials/_search_v2.html' %}
+        <div class="col-lg-3">
+            {% include 'equipment/partials/_search_v2.html' %}
+        </div>
 
         <!-- Equipments types widget -->
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             {% equipment_types_widget %}
         </div>
         <!-- End equipments types widget -->

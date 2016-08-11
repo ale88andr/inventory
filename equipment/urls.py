@@ -9,7 +9,9 @@ from equipment.views import (
     EquipmentChownView,
     EquipmentReviseView,
     EquipmentReviseUpdate,
-    EquipmentsUnusedView,
+    EquipmentUnusedView,
+    EquipmentRepairView,
+    EquipmentUnrecordedView,
 )
 
 urlpatterns = (
@@ -21,5 +23,7 @@ urlpatterns = (
     url(r'(?P<pk>\d+)/chown/$', EquipmentChownView.as_view(), name='chown'),
     url(r'^revise/$', EquipmentReviseView.as_view(), name='revise'),
     url(r'^revise/update/$', EquipmentReviseUpdate.as_view(), name='revise_update'),
-    url(r'^unused/$', EquipmentsUnusedView.as_view(), name='unused')
+    url(r'^unused/$', EquipmentUnusedView.as_view(), name='unused'),
+    url(r'^repair/$', EquipmentRepairView.as_view(), name='in_repair'),
+    url(r'^unrecorded/$', EquipmentUnrecordedView.as_view(), name='unrecorded'),
 )
