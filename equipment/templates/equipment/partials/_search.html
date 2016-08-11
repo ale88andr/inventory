@@ -1,0 +1,72 @@
+{% extends 'layouts/application.html' %}
+
+{% block title %}{{ view.meta.title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h4 class="page-header text-muted">
+                <i class="fa fa-search fa-fw"></i>
+                {{ view.meta.title }}
+            </h4>
+            <table class="table table-responsive table-bordered">
+                <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Модель</th>
+                        <th>Статус</th>
+                        <th>Инвентарный №</th>
+                        <th>Серийный №</th>
+                        <th>Ответственный</th>
+                        <th>Месторасположение</th>
+                        <th>Дата ревизии</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in equipments %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'equipment:type' item.type_id %}">{{ item.type }}</a>
+                            </td>
+                            <td>{{ item.model }}</td>
+                            <td>
+                                {% if item.is_used %}
+                                    <span class="text-success">
+                                        <i class="fa fa-check-circle fa-fw"></i>
+                                    </span>
+                                {% else %}
+                                    <span class="text-danger">
+                                        <i class="fa fa-close fa-fw"></i>
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item.inventory_number|default_if_none:'<span class="label label-danger">Не назначен</span>' }}
+                            </td>
+                            <td class="text-warning"><b>{{ item.serial_number }}</b></td>
+                            <td>
+                                <a href="{% url 'enterprise:employee' item.responsible_id %}">
+                                   {{ item.responsible|default:'<span class="label label-warning">Не назначен</span>' }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'equipment:emplacement' item.responsible.location_id %}">
+                                    {{ item.responsible.location|default:'<span class="label label-warning">Не установленно</span>' }}
+                                </a>
+                            </td>
+                            <td>{{ item.revised_at }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr class="text-center text-primary">
+                            <td colspan="9">Данные по этому виду запроса отсутствуют!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- /.table -->
+            <p class="text-muted">
+                Всего найденно: <span class="badge">{{ equipments|length }}</span>
+            </p>
+        </div>
+    </div>
+{% endblock %}

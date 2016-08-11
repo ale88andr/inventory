@@ -5,6 +5,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import Error
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -333,4 +334,36 @@ class EquipmentUnrecordedView(ListView):
     def meta(self):
         return {
             'title': '{0} ({1})'.format(self.page_title, self.queryset.count())
+        }
+
+
+class EquipmentSearchView(ListView):
+    model = Equipment
+    queryset = None
+    template_name = 'equipment/partials/_search.html'
+    context_object_name = 'equipments'
+    error_message = 'Поиск не может искать "ничего". Задайте критерии поиска.'
+    page_title = 'Результат поискового запроса '
+    search_value = ''
+
+    def get(self, request, *args, **kwargs):
+        if 'q' in request.GET:
+            self.search_value = request.GET['q']
+            criterion = Q(model__contains=self.search_value)
+            criterion.add(Q(inventory_number__contains=self.search_value), Q.OR)
+            criterion.add(Q(type__value__contains=self.search_value), Q.OR)
+            criterion.add(Q(serial_number__contains=self.search_value), Q.OR)
+            criterion.add(Q(responsible__location__emplacement__contains=self.search_value), Q.OR)
+            criterion.add(Q(responsible__surname__contains=self.search_value), Q.OR)
+
+            self.queryset = Equipment.objects.filter(criterion)
+
+            return super(EquipmentSearchView, self).get(request, *args, **kwargs)
+        else:
+            messages.info(request, self.error_message)
+            return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+    def meta(self):
+        return {
+            'title': '{0} "{1}" ({2})'.format(self.page_title, self.search_value, self.queryset.count())
         }
