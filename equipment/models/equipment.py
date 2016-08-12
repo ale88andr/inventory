@@ -41,7 +41,7 @@ class Equipment(models.Model):
         blank=True,
         help_text='Заводской номер оборудования, может содержать цифры и символы, допускается его отсутствие'
     )
-    inventory_number = models.IntegerField(
+    inventory_number = models.CharField(
         'Инвентарный номер',
         blank=True,
         null=True,

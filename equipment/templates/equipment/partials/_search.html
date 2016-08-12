@@ -1,14 +1,18 @@
 {% extends 'layouts/application.html' %}
+{% load staticfiles %}
 
 {% block title %}{{ view.meta.title }}{% endblock %}
 
 {% block content %}
+
+    <script type="text/javascript" defer src="{% static 'js/search/main.js' %}"></script>
+
     <div class="row">
         <div class="col-lg-12">
-            <h4 class="page-header text-muted">
+            <h3 class="page-header">
                 <i class="fa fa-search fa-fw"></i>
-                {{ view.meta.title }}
-            </h4>
+                {{ view.meta.title|safe }}
+            </h3>
             <table class="table table-responsive table-bordered">
                 <thead>
                     <tr>
@@ -22,7 +26,7 @@
                         <th>Дата ревизии</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="search">
                     {% for item in equipments %}
                         <tr>
                             <td>
@@ -45,14 +49,22 @@
                             </td>
                             <td class="text-warning"><b>{{ item.serial_number }}</b></td>
                             <td>
-                                <a href="{% url 'enterprise:employee' item.responsible_id %}">
-                                   {{ item.responsible|default:'<span class="label label-warning">Не назначен</span>' }}
-                                </a>
+                                {% if item.responsible_id %}
+                                    <a href="{% url 'enterprise:employee' item.responsible_id %}">
+                                       {{ item.responsible }}
+                                    </a>
+                                {% else %}
+                                    <span class="label label-warning">Не назначен</span>
+                                {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'equipment:emplacement' item.responsible.location_id %}">
-                                    {{ item.responsible.location|default:'<span class="label label-warning">Не установленно</span>' }}
-                                </a>
+                                {% if item.responsible.location_id %}
+                                    <a href="{% url 'equipment:emplacement' item.responsible.location_id %}">
+                                        {{ item.responsible.location }}
+                                    </a>
+                                {% else %}
+                                    <span class="label label-warning">Не установленно</span>
+                                {% endif %}
                             </td>
                             <td>{{ item.revised_at }}</td>
                         </tr>

@@ -445,3 +445,7 @@ li.equipment-li {
   width: 100%;
   opacity: 0;
 }
+
+span.highlight {
+  background-color: yellow;
+}

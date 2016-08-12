@@ -349,12 +349,12 @@ class EquipmentSearchView(ListView):
     def get(self, request, *args, **kwargs):
         if 'q' in request.GET:
             self.search_value = request.GET['q']
-            criterion = Q(model__contains=self.search_value)
-            criterion.add(Q(inventory_number__contains=self.search_value), Q.OR)
-            criterion.add(Q(type__value__contains=self.search_value), Q.OR)
-            criterion.add(Q(serial_number__contains=self.search_value), Q.OR)
-            criterion.add(Q(responsible__location__emplacement__contains=self.search_value), Q.OR)
-            criterion.add(Q(responsible__surname__contains=self.search_value), Q.OR)
+            criterion = Q(model__icontains=self.search_value)
+            criterion.add(Q(inventory_number__icontains=self.search_value), Q.OR)
+            criterion.add(Q(type__value__icontains=self.search_value), Q.OR)
+            criterion.add(Q(serial_number__icontains=self.search_value), Q.OR)
+            criterion.add(Q(responsible__location__emplacement__icontains=self.search_value), Q.OR)
+            criterion.add(Q(responsible__surname__icontains=self.search_value), Q.OR)
 
             self.queryset = Equipment.objects.filter(criterion)
 
@@ -365,5 +365,5 @@ class EquipmentSearchView(ListView):
 
     def meta(self):
         return {
-            'title': '{0} "{1}" ({2})'.format(self.page_title, self.search_value, self.queryset.count())
+            'title': '{0} "<b id="result">{1}</b>" ({2})'.format(self.page_title, self.search_value, self.queryset.count())
         }
