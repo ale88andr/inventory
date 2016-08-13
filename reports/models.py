@@ -110,8 +110,8 @@ class Report:
                     equipment.serial_number,
                     equipment.type.value,
                     equipment.model,
-                    equipment.responsible.location.emplacement,
-                    equipment.responsible.short_full_name(),
+                    equipment.responsible.location.emplacement if equipment.responsible else '-',
+                    equipment.responsible.short_full_name() if equipment.responsible else '-',
                     datetime.strftime(equipment.revised_at, '%d.%m.%Y')
                 ]
 

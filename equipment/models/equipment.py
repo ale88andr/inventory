@@ -45,6 +45,7 @@ class Equipment(models.Model):
         'Инвентарный номер',
         blank=True,
         null=True,
+        max_length=30,
         help_text='Инвентарный номер оборудования, допускаются только цифровые идентификаторы'
     )
     model = models.CharField(
