@@ -10,7 +10,9 @@
         {% for item in selection %}
             <tr>
                 <td>
-                    {{ item.type }}
+                    <a href="{% url 'equipment:type' item.type_id %}">
+                        {{ item.type }}
+                    </a>
                 </td>
                 <td>
                     <b>{{ item.model }}</b>

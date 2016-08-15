@@ -7,7 +7,7 @@ var dataSource = [
     { category: "Используется<br/>оборудования (" + usedEquipments + ")", number: parseInt(usedEquipments) },
     { category: "Не используется<br/>оборудования (" + unusedEquipments + ")", number: parseInt(unusedEquipments) },
     { category: "Находится в ремонте (" + repairedEquipments + ")", number: parseInt(repairedEquipments) },
-    { category: "Оборудывание<br/>без инвентарного (" + wInvEquipments + ")", number: parseInt(wInvEquipments) }
+    { category: "Оборудование<br/>без инвентарного (" + wInvEquipments + ")", number: parseInt(wInvEquipments) }
 ];
 
 $("#chartContainer").dxPieChart({
