@@ -1,3 +1,9 @@
+{% load staticfiles %}
+
+<script type="text/javascript" defer src="{% static 'js/dist/dx.chartjs.js' %}"></script>
+<script type="text/javascript" defer src="{% static 'js/dashboard/chart-pie.js' %}"></script>
+<script type="text/javascript" defer src="{% static 'js/dashboard/chart.js' %}"></script>
+
 <div class="row">
     <div class="col-lg-12">
         <h3 class="page-header text-center">
@@ -98,3 +104,29 @@
         </div>
     </div>
 </div><!-- /.row -->
+<div class="row">
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Использование оборудования:
+            </div>
+            <div class="panel-body">
+                <div id="chartContainer" style="width:100%;height: 400px"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Распределение оборудования(типы):
+            </div>
+            <div class="panel-body">
+                <div id="chartContainerTypes" style="width:100%;height: 400px"></div>
+                <div id="catInfo">
+                    <br /><span id="typeName"></span>
+                    <span id="typeNumber"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

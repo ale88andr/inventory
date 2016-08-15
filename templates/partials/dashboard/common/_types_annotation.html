@@ -7,12 +7,12 @@
     </thead>
     <tbody>
         {% for item in selection %}
-            <tr>
+            <tr class="types-annotation">
                 <td>
-                    <b>{{ item.value }}</b>
+                    <b class="type-name">{{ item.value }}</b>
                 </td>
                 <td class="danger text-center">
-                    <b>{{ item.types_count }}</b>
+                    <b class="type-quantity">{{ item.types_count }}</b>
                 </td>
             </tr>
         {% empty %}
