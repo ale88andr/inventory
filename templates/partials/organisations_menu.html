@@ -1,8 +1,8 @@
 {% for item in menu %}
     <li>
         <a href="{% url 'enterprise:detail' item.pk %}">
-            <span class="fa fa-institution"> </span>
-            {{ item.title }}
+            <span class="fa fa-building-o fa-fw"> </span>
+            {{ item.short_title }}
             <span class="fa arrow"></span>
         </a>
 {#        {% if item.has_subordinates %}#}
@@ -11,15 +11,15 @@
                     <li>
                         <a href="{% url 'enterprise:detail' subordinate.pk %}">
                             <span class="fa fa-code-fork"> </span>
-                            {{ subordinate.title }}
+                            {{ subordinate.short_title }}
                         </a>
 {#                        {% if subordinate.has_subordinates %}#}
                             <ul class="nav nav-fourth-level">
                                 {% for sub in subordinate.subordinates.all %}
                                     <li>
                                         <a href="{% url 'enterprise:detail' sub.pk %}">
-                                            <span class="fa fa-building-o"> </span>
-                                            {{ sub.title }}
+                                            <span class="fa fa-angle-right fa-fw"> </span>
+                                            {{ sub.short_title }}
                                         </a>
                                     </li>
                                 {% endfor %}

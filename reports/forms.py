@@ -5,7 +5,7 @@ class ReportsForm(forms.Form):
 
     REPORT_TYPES = (
         ('summary', 'Сводный отчёт'),
-        ('by_types', 'По типам оборудования'),
+        # ('by_types', 'По типам оборудования'),
     )
 
     report_type = forms.ChoiceField(

@@ -1,9 +1,13 @@
+{% load static %}
+
 {% if request.user.is_authenticated %}
     <li>
-        <a href="#">
-            <i class="text-primary">Вы вошли как:<br>
-            <b>{{ request.user.get_short_name }}</b></i><br>
-            <i class="text-muted">({{ request.user.organisation.short_title }})</i>
+        <a href="#" class="text-center">
+            <img class="center-block" src="{% static 'img/userpic.png' %}" alt="Аватар пользователя" width="150" height="150">
+            <i class="text-primary">Вы вошли как:<br></i>
+            <h4 class="text-info">{{ request.user.get_short_name }}</h4>
+            <i class="text-primary">{{ request.user.get_full_name|default:'' }}</i><br>
+            <span class="label label-success">{{ request.user.organisation.short_title }}</span>
         </a>
     </li>
     <li class="divider"></li>
@@ -19,15 +23,23 @@
     </li>
 {% else %}
     <li>
-        <a href="#">
-            <i class="text-warning">Вы находитесь в режиме просмотра. <br> Авторизуйтесь, перейдя по ссылке ниже, <br> для активации своих привилегий.</i>
+        <a href="{% url 'login' %}" class="text-center">
+            <img src="{% static 'img/anonimous.png' %}" class="center-block" alt="Аноним">
+            <b>
+                Вы находитесь в режиме просмотра. <br>
+                Авторизуйтесь, перейдя по ссылке ниже, <br>
+                для активации своих привилегий.
+            </b>
         </a>
     </li>
     <li class="divider"></li>
-    <li>
+    <li class="text-center">
         <a href="{% url 'login' %}">
-            <i class="fa fa-key fa-fw"></i>
-            Авторизоваться
+            <span  class="text-success">
+                <i class="fa fa-key fa-fw"></i>
+                Авторизоваться
+            </span>
+
         </a>
     </li>
 {% endif %}
