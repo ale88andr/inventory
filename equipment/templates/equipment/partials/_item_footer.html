@@ -2,5 +2,17 @@
 <form action="" method="post">
     {% csrf_token %}
     <input type="hidden" name="pdf" value="{{ equipment.id }}">
-    <button class="btn btn-default pull-right" type="submit"><i class="fa fa-qrcode fa-fw"></i> QR Стикер</button>
+    <button class="btn btn-default pull-right" type="submit" data-toggle="tooltip" data-placement="top" data-original-title="Средний, горизонтально расположенный QR стикер"><i class="fa fa-qrcode fa-fw"></i> QR Стикер</button>
+</form>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="pdf" value="{{ equipment.id }}">
+    <input type="hidden" name="size" value="sm">
+    <button class="btn btn-default pull-right" type="submit"  data-toggle="tooltip" data-placement="top" data-original-title="QR стикер малого размера(~2,5x3.5 см)"><i class="fa fa-qrcode fa-fw"></i> QR Стикер (sm)</button>
+</form>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="pdf" value="{{ equipment.id }}">
+    <input type="hidden" name="size" value="lg">
+    <button class="btn btn-default pull-right" type="submit" data-toggle="tooltip" data-placement="top" data-original-title="Большой QR стикер, подходит для труднодоступных мест, для считывания кода с большого расстояния"><i class="fa fa-qrcode fa-fw"></i> QR Стикер (lg)</button>
 </form>

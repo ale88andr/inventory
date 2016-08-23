@@ -1,7 +1,8 @@
 import copy
 
 from reportlab.lib.pagesizes import A4, letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image
@@ -20,7 +21,7 @@ class PdfPrint:
             self.pageSize = letter
         self.width, self.height = self.pageSize
 
-    def report(self, equipment_qrcode, equipment_inventory, equipment_serial):
+    def report(self, equipment_qrcode, equipment_inventory, equipment_serial, small_size=True):
         font_url = "%s/assets/css/dist/fonts/calibri.ttf" % settings.BASE_DIR
         pdfmetrics.registerFont(TTFont('Calibri', font_url))
 
@@ -43,13 +44,28 @@ class PdfPrint:
         body_text.fontSize = 16
         body_text.fontName = 'Calibri'
 
+        data = []
+
+        print(small_size)
+
         # create document
-        data = [
-            Image(equipment_qrcode),
-            Paragraph('Инв. {0}'.format(str(equipment_inventory)), title_text),
-            Paragraph('S/N{0}'.format(equipment_serial), body_text)
-        ]
+        if small_size is True:
+            data.append(PdfPrint.render_qr(equipment_qrcode))
+            data.append(Paragraph('Инв. {0}'.format(str(equipment_inventory)), title_text))
+            data.append(Paragraph('S/N{0}'.format(equipment_serial), body_text))
+        else:
+            data.append(Image(equipment_qrcode))
+            data.append(Paragraph('Инв. {0}'.format(str(equipment_inventory)), title_text)),
+            data.append(Paragraph('S/N{0}'.format(equipment_serial), body_text))
+
         document.build(data)
         pdf = self.buffer.getvalue()
         self.buffer.close()
         return pdf
+
+    @staticmethod
+    def render_qr(image_path):
+        image = Image(image_path)
+        image.drawHeight = 2 * inch
+        image.drawWidth = 2 * inch
+        return image

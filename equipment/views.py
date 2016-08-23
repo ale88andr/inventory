@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.generic import ListView, TemplateView, DetailView, UpdateView, FormView, RedirectView
+
 from enterprise.models import Location
 from reports.models import XLS, PDF
 from .models import Equipment, EquipmentTypes
@@ -49,7 +50,11 @@ class EquipmentIndexView(ListView, EquipmentFormMixin):
         self.search_form.is_valid()
 
         if 'pdf' in request.POST:
-            return self.sticker_v2(request.POST.get('pdf'))
+            size = 'md'
+            if 'size' in request.POST:
+                size = request.POST.get('size')
+
+            return self.sticker_v2(request.POST.get('pdf'), size)
 
         if self.filter_form.cleaned_data.get('on_page'):
             self.paginate_by = int(self.filter_form.cleaned_data.get('on_page'))
@@ -76,14 +81,29 @@ class EquipmentIndexView(ListView, EquipmentFormMixin):
         return queryset
 
     @staticmethod
-    def sticker_v2(equipment_id):
+    def sticker_v2(equipment_id, size):
         equipment = Equipment.get(equipment_id)
-        filename = 'sticker_' + equipment.serial_number
-        pdf = PDF(fileName=filename)
-        pdf.insertImage(equipment.generate_qrcode(pdf=True))
-        if equipment.inventory_number:
-            pdf.insertRow('{0}'.format(equipment.inventory_number), 'h1_qr', lineBreak=False)
-        pdf.insertRow('s/n {0}'.format(equipment.serial_number), 'center')
+        pdf = PDF(fileName='sticker_' + equipment.serial_number)
+        image = equipment.generate_qrcode(pdf=True)
+        inventory_number = equipment.inventory_number if equipment.inventory_number else ''
+        serial_number = equipment.serial_number if equipment.serial_number else ''
+
+        if size == 'md':
+            pdf.insertCompactQRCodeSticker(
+                image,
+                inventory=inventory_number,
+                serial='S/n: {0}'.format(serial_number))
+        elif size == 'sm':
+            pdf.insertSmallQRCodeSticker(
+                image,
+                inventory=inventory_number,
+                serial=serial_number)
+        else:
+            pdf.insertLargeQRCodeSticker(
+                image,
+                inventory=inventory_number,
+                serial=serial_number)
+
         return pdf.render()
 
 

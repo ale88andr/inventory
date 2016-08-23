@@ -8,7 +8,8 @@ from django.db.models import Count
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, letter
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer, Table, TableStyle
@@ -334,43 +335,58 @@ class PDF:
     def setStyles(self):
         styles = getSampleStyleSheet()
 
-        self.h1 = copy.copy(styles['Normal'])
-        self.h1.fontName = 'Custom'
-        self.h1.fontSize = 20
-        self.h1.alignment = 1
+        self.inventory_lg = copy.copy(styles['Normal'])
+        self.inventory_lg.fontName = 'Custom'
+        self.inventory_lg.fontSize = 24
+        self.inventory_lg.leading = 30
+        self.inventory_lg.alignment = 1
 
-        self.h1_qr = copy.copy(self.h1)
-        self.h1_qr.fontSize = 24
-        self.h1_qr.leading = 26
+        self.serial_md = copy.copy(self.inventory_lg)
+        self.serial_md.fontSize = 10
+        self.serial_md.alignment = 0
+        self.serial_md.leading = 12
 
-        self.h3 = self.h1
-        self.h3.fontSize = 16
+        self.inventory_md = copy.copy(self.inventory_lg)
+        self.inventory_md.fontSize = 28
+        self.inventory_md.leading = 34
+        self.inventory_md.alignment = 0
+
+        self.inventory_sm = copy.copy(self.inventory_lg)
+        self.inventory_sm.fontSize = 16
+
+        self.serial_sm = copy.copy(self.inventory_lg)
+        self.serial_sm.fontSize = 7
+        self.serial_sm.alignment = 1
+        self.serial_sm.leading = 9
 
         self.default = copy.copy(styles['Normal'])
         self.default.alignment = 4
         self.default.fontSize = 11
         self.default.fontName = 'Custom'
 
-        self.dt = copy.copy(styles['Normal'])
-        self.dt.alignment = 2
-        self.dt.fontName = 'Custom'
-
-        self.center = copy.copy(self.dt)
-        self.center.alignment = 1
-
-        self.center_md = copy.copy(self.center)
-        self.center.fontSize = 12
+        self.serial_lg = copy.copy(styles['Normal'])
+        self.serial_lg.alignment = 1
+        self.serial_lg.fontName = 'Custom'
 
     def insertRow(self, data, style=None, lineBreak=True):
-        self.data.append(Paragraph(data, getattr(self, style) if style else self.default))
+        self.data.append(Paragraph(data, style if isinstance(style, ParagraphStyle) else self.default))
+
         if lineBreak is True:
             self.insertBreak()
 
     def insertBreak(self):
         self.data.append(Spacer(1, 32))
 
-    def insertImage(self, image):
-        self.data.append(Image(image))
+    def insertImage(self, image, size=None, align=None):
+        if size and isinstance(size, (int, float)):
+            image = Image(image, width=size*cm, height=size*cm)
+            if align:
+                image.hAlign = align
+            else:
+                image.hAlign = 'LEFT'
+            self.data.append(image)
+        else:
+            self.data.append(Image(image))
 
     def insertTable(self, columns=None, queryset=None):
         row_count = 0
@@ -391,6 +407,41 @@ class PDF:
             ]
         ))
         self.data.append(t)
+
+    def insertCompactQRCodeSticker(self, image, inventory, serial):
+        padding = 7
+        tbl_data = [
+            [Image(image, width=1.5*cm, height=1.5*cm)]
+        ]
+
+        tbl_data[0].append([Paragraph(inventory, self.inventory_md), Paragraph(serial, self.serial_md)])
+
+        table = Table(tbl_data, colWidths=(50, 150))
+        table.setStyle(TableStyle(
+            [
+                ('VALIGN',(-1,-1),(-1,-1),'MIDDLE'),
+                ('BOX', (0,0), (-1,-1), 0.75, colors.black),
+                ("BOTTOMPADDING",(0,0),(-1,-1),padding),
+                ("TOPPADDING", (0,0),(-1,-1),padding),
+                ("RIGHTPADDING", (0,0),(-1,-1),padding),
+                ("LEFTPADDING", (0,0),(-1,-1),padding)
+            ]
+        ))
+
+        self.data.append(table)
+
+    def insertSmallQRCodeSticker(self, image, inventory, serial):
+        self.insertRow(serial, self.serial_sm, lineBreak=False)
+        self.insertImage(image=image, size=2.5, align='CENTER')
+        self.insertRow(inventory, self.inventory_sm, lineBreak=False)
+
+    def insertLargeQRCodeSticker(self, image, inventory, serial):
+        self.insertImage(image, size=4.5, align='CENTER')
+
+        if inventory:
+            self.insertRow('{0}'.format(inventory), self.inventory_lg, lineBreak=False)
+
+        self.insertRow('s/n {0}'.format(serial), self.serial_lg)
 
     def render(self):
         self.document.build(self.data)

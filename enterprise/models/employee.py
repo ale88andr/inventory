@@ -51,6 +51,10 @@ class Employee(models.Model):
             (self.location.emplacement if self.location else '')
         )
 
+    @property
+    def location_advise(self):
+        return "{0}({1})".format(self.location, self.organisation.short_title)
+
     @staticmethod
     def all():
         results = Employee.objects.all()

@@ -7,7 +7,6 @@ class ReportsView(TemplateView):
     template_name = 'reports/index.html'
     page_title = 'Отчёты'
     reports_form = ReportsForm()
-    success_message = 'Сводный отчёт выгружен.'
 
     def get(self, request, *args, **kwargs):
         if request.GET.get('report_type') == 'summary':
