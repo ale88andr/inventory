@@ -23,7 +23,7 @@
                         S/N: {{ equipment.serial_number }}
                     </span>
                 <h4 class="timeline-title">
-                <b>{{ equipment.model }}</b>
+                <a href="{% url 'equipment:detail' equipment.id %}"><b>{{ equipment.model }}</b></a>
             </h4>
                 <p>
                     <small class="text-muted">

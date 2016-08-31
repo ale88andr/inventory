@@ -13,6 +13,7 @@ from equipment.views import (
     EquipmentRepairView,
     EquipmentUnrecordedView,
     EquipmentSearchView,
+    EquipmentDetailView
 )
 
 urlpatterns = (
@@ -28,4 +29,5 @@ urlpatterns = (
     url(r'^repair/$', EquipmentRepairView.as_view(), name='in_repair'),
     url(r'^unrecorded/$', EquipmentUnrecordedView.as_view(), name='unrecorded'),
     url(r'^search/$', EquipmentSearchView.as_view(), name='search'),
+    url(r'^(?P<pk>\d+)/detail/$', EquipmentDetailView.as_view(), name='detail'),
 )

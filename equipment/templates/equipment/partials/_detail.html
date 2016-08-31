@@ -1,0 +1,203 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="fa fa-info fa-fw"></i> Детализация информации: <b>{{ equipment.model }}</b>
+        <div class="pull-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    Действия
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li><a href="{{request.META.HTTP_REFERER}}">Назад</a>
+                    <li><a href="{% url 'equipment:index' %}">Все оборудование</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#summary">Общая информация</a></li>
+                    <li><a data-toggle="tab" href="#responsible">Ответственное лицо</a></li>
+                    <li><a data-toggle="tab" href="#actions">Действия</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="summary" class="tab-pane fade in active">
+                        <div class="col-lg-6">
+                            <h3 class="page-header">{{ equipment.model }}</h3>
+                            <table class="table table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td>Тип оборудования</td>
+                                        <td>
+                                            <a href="{% url 'equipment:type' equipment.type.id %}">
+                                                <b>{{ equipment.type }}</b>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Используется</td>
+                                        <td>
+                                            {% if equipment.is_used %}
+                                                <span class="text-success">
+                                                    <i class="fa fa-check-circle fa-fw"></i>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-danger">
+                                                    <i class="fa fa-close fa-fw"></i>
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>В ремонте</td>
+                                        <td>
+                                            {% if equipment.is_repair %}
+                                                <span class="text-danger">
+                                                    <i class="fa fa-life-saver fa-fw"></i>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-success">
+                                                    <i class="fa fa-minus fa-fw"></i>
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Месторасположение</td>
+                                        <td>
+                                            {% if equipment.emplacement %}
+                                                <a href="{% url 'equipment:emplacement' equipment.responsible.location.id %}">
+                                                    <b>{{ equipment.responsible.location }}</b>
+                                                </a>
+                                            {% else %}
+                                                <span class="label label-warning">Не определено</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата добавления в систему</td>
+                                        <td>{{ equipment.created_at }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Инвентарный номер</td>
+                                        <td><b class="text-primary">{{ equipment.inventory_number }}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Серийный номер</td>
+                                        <td><b class="text-danger">{{ equipment.serial_number }}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Комментарий</td>
+                                        <td>{{ equipment.note }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата последней ревизии</td>
+                                        <td>{{ equipment.revised_at }} ({{ equipment.revised_diff }})</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="page-header">QR идентификатор</h3>
+                            <div class="row">
+                                <img class="img-thumbnail img-rounded" width="250" height="250" src='data:image/png;base64,{{ equipment.generate_qrcode }}'/>
+                            </div>
+                            <div class="row" style="padding-top: 20px">
+                                {% include 'equipment/partials/_stickers.html' %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="responsible" class="tab-pane fade">
+                        <div class="col-lg-6">
+                            <h3>
+                                {% if equipment.responsible %}
+                                    {{ equipment.responsible.full_name }}
+                                {% else %}
+                                    <span class="label label-danger">Не назначен</span>
+                                {% endif %}
+                            </h3>
+                            <table class="table table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td>Организация</td>
+                                        <td>
+                                            <b>{{ equipment.responsible.organisation }}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Подразделение</td>
+                                        <td>
+                                            <b>{{ equipment.responsible.department|default:'-' }}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Должность</td>
+                                        <td>
+                                            <b>{{ equipment.responsible.get_position_display }}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Месторасположение</td>
+                                        <td>
+                                            {% if equipment.emplacement %}
+                                                <a href="{% url 'equipment:emplacement' equipment.responsible.location.id %}">
+                                                    <b>{{ equipment.responsible.location }}</b>
+                                                </a>
+                                            {% else %}
+                                                <span class="label label-warning">Не определено</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Закреплено за сотрудником:</td>
+                                        <td>
+                                            {% if equipment.responsible %}
+                                                <a href="{% url 'enterprise:employee' equipment.responsible.id %}">
+                                                    Список оборудования
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Всего закрепленно за сотрудником</td>
+                                        <td>
+                                            <b class="text-danger">{{ equipment.responsible.equipment_set.count }} ед.</b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="actions" class="tab-pane fade">
+                        <div class="col-lg-12">
+                            <p class="text-primary" style="padding-top: 20px">
+                                <i class="fa fa-retweet fa-fw"></i>
+                                <a href="#" id="chown-control">
+                                    Сменить ответственного
+                                </a>
+                            </p>
+                            {% include 'equipment/partials/_chown_form.html' %}
+                        </div>
+                        <div class="col-lg-12">
+                            <p class="text-primary" style="padding-top: 20px">
+                                <i class="fa fa-cog fa-fw"></i>
+                                <a href="#" id="repair-control">
+                                    Изменить статус оборудования
+                                </a>
+                            </p>
+                            {% include 'equipment/partials/_repair_form.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col-lg-8 (nested) -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->

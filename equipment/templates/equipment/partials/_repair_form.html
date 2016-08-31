@@ -1,0 +1,26 @@
+<div class="well-sm hidden" style="padding-top: 20px" id="repair-block">
+    <form action="{% url 'equipment:chown' equipment.id %}" class="form form-inline" method="post" id="repair-form">
+        {% csrf_token %}
+        <legend>Сменить статус оборудования:</legend>
+        <p class="text-muted">
+            Текущий статус:
+            {% if equipment.is_repair %}
+                <b class="text-danger">
+                    В ремонте
+                </b>
+                <div class="form-group">
+                    <input type="hidden" name="is_repair" value="False">
+                </div>
+                <input type="submit" class="btn btn-success" value="Убрать из ремонта">
+            {% else %}
+                <b class="text-success">
+                    В ремонте не состоит
+                </b>
+                <div class="form-group">
+                    <input type="hidden" name="is_repair" value="True">
+                </div>
+                <input type="submit" class="btn btn-danger" value="Отправить в ремонт">
+            {% endif %}
+        </p>
+    </form>
+</div>

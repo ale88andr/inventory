@@ -1,0 +1,16 @@
+<div class="well-sm hidden" style="padding: 20px 0" id="chown-block">
+    <form action="{% url 'equipment:chown' equipment.id %}" class="form form-inline" method="post" id="chown-form">
+        {% csrf_token %}
+        <legend>Сменить ответственное лицо:</legend>
+        <p class="text-muted">
+            Ответственный:
+            <b class="text-success">{{ equipment.responsible }}</b>
+        </p>
+        {% for field in form %}
+            <div class="form-group">
+                {{ field }}
+            </div>
+            <input type="submit" class="btn btn-success" value="Сменить ответственное лицо">
+        {% endfor %}
+    </form>
+</div>

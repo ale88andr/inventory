@@ -70,7 +70,8 @@ class EquipmentChownForm(forms.ModelForm):
     responsible = forms.ModelChoiceField(
         queryset=Employee.all(),
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        empty_label='Выберите ответственного'
     )
 
     class Meta:

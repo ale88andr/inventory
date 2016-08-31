@@ -387,3 +387,15 @@ class EquipmentSearchView(ListView):
         return {
             'title': '{0} "<b id="result">{1}</b>" ({2})'.format(self.page_title, self.search_value, self.queryset.count())
         }
+
+
+class EquipmentDetailView(DetailView, FormView):
+    template_name = 'equipment/detail.html'
+    context_object_name = 'equipment'
+    model = Equipment
+    form_class = EquipmentChownForm
+
+    def meta(self):
+       return {
+            'title': '{0} ({1})'.format(self.object.model, self.object.type)
+       }

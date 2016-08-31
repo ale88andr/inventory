@@ -1,0 +1,20 @@
+{% extends 'layouts/application.html' %}
+{% load static %}
+
+{% block title %}{{ view.meta.title }}{% endblock %}
+
+{% block content %}
+
+    <script defer type="application/javascript" src="{% static 'js/equipment/chown.js' %}"></script>
+    <script defer type="application/javascript" src="{% static 'js/equipment/repair.js' %}"></script>
+
+    <div class="row">
+        <h3 class="page-header">
+            <i class="fa fa-desktop fa-fw"></i>
+            {{ view.meta.title }}
+        </h3>
+        <!-- equipment detail -->
+        {% include 'equipment/partials/_detail.html' %}
+        <!-- \equipment detail -->
+    </div>
+{% endblock %}

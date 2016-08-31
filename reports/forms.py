@@ -11,5 +11,5 @@ class ReportsForm(forms.Form):
     report_type = forms.ChoiceField(
         label='Тип отчёта',
         choices=REPORT_TYPES,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-repairControl'})
     )
