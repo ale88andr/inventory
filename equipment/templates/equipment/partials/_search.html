@@ -32,7 +32,7 @@
                             <td>
                                 <a href="{% url 'equipment:type' item.type_id %}">{{ item.type }}</a>
                             </td>
-                            <td>{{ item.model }}</td>
+                            <td><b><a href="{% url 'equipment:detail' item.model %}">{{ item.model }}</a></b></td>
                             <td>
                                 {% if item.is_used %}
                                     <span class="text-success">

@@ -9,7 +9,7 @@
         {% for item in selection %}
             <tr class="types-annotation">
                 <td>
-                    <b class="type-name">{{ item.value }}</b>
+                    <b class="type-name"><a href="{% url 'equipment:type' item.id %}">{{ item.value }}</a></b>
                 </td>
                 <td class="danger text-center">
                     <b class="type-quantity">{{ item.types_count }}</b>

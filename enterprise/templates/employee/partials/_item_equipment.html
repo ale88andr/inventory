@@ -7,7 +7,7 @@
         {{ equipment.type.value }}
     </td>
     <td>
-        {{ equipment.model }}
+        <b><a href="{% url 'equipment:detail' equipment.id %}">{{ equipment.model }}</a></b>
     </td>
     <td class="text-danger">
         <b>{{ equipment.serial_number|default:'-----' }}</b>

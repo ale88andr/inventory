@@ -15,7 +15,7 @@
                     </a>
                 </td>
                 <td>
-                    <b>{{ item.model }}</b>
+                    <b><a href="{% url 'equipment:detail' item.id %}">{{ item.model }}</a></b>
                 </td>
                 <td class="text-primary">
                     {{ item.revised_diff }}
