@@ -1,4 +1,5 @@
 import copy
+import datetime
 from io import BytesIO
 
 import xlwt
@@ -368,6 +369,20 @@ class PDF:
         self.serial_lg.alignment = 1
         self.serial_lg.fontName = 'Custom'
 
+        self.blank_header = copy.copy(self.inventory_lg)
+
+        self.blank_header_sm = copy.copy(self.inventory_lg)
+        self.blank_header_sm.fontSize = 16
+
+        self.blank_center = copy.copy(self.serial_md)
+        self.blank_center.alignment = 1
+
+        self.blank_datetime = copy.copy(self.default)
+        self.blank_datetime.alignment = 2
+
+        self.blank_center_md = copy.copy(self.blank_center)
+        self.blank_center_md.fontSize = 12
+
     def insertRow(self, data, style=None, lineBreak=True):
         self.data.append(Paragraph(data, style if isinstance(style, ParagraphStyle) else self.default))
 
@@ -442,6 +457,34 @@ class PDF:
             self.insertRow('{0}'.format(inventory), self.inventory_lg, lineBreak=False)
 
         self.insertRow('s/n {0}'.format(serial), self.serial_lg)
+
+    def generateEmployeeReport(self, employeeObject):
+        self.insertRow(employeeObject.organisation.title, self.blank_center)
+        self.insertRow('Форма учета инвентаризационного оборудования', self.blank_header)
+        self.insertRow('от {0}'.format(datetime.now().strftime('%Y-%m-%d')), self.blank_datetime)
+        self.insertRow('Сотрудник: {0} {1}'.format(
+            employeeObject.get_position_display(),
+            employeeObject.short_full_name()),
+            self.blank_center
+        )
+        self.insertRow('<u>Список оборудования:</u>', self.blank_header_sm, False)
+
+        # Equipments table data set
+        columns = ('Инв. №', 'Серийный номер', 'Тип', 'Модель')
+        employee_equipments = employeeObject.equipment_set.select_related('type').order_by('type')
+        queryset = [(e.inventory_number, e.serial_number, e.type.value, e.model) for e in employee_equipments]
+
+        self.insertTable(columns=columns, queryset=queryset)
+        self.insertBreak()
+
+        self.insertRow('Всего числится оборудования: {0} ед.'.format(len(queryset)))
+        self.insertRow(
+            '{0} _______________________________________________ {1}'.
+            format(datetime.now().strftime('%d.%m.%Y'), employeeObject.short_full_name()),
+            self.blank_center_md,
+            lineBreak=False
+        )
+        self.insertRow('(подпись)', self.blank_center)
 
     def render(self):
         self.document.build(self.data)

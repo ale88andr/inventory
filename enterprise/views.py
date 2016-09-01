@@ -1,5 +1,3 @@
-import datetime
-
 from django.db.models import Count
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, DetailView
@@ -130,25 +128,5 @@ class EmployeeDetailView(DetailView, EmployeeDetailMixin):
 
     def generate_pdf(self):
         pdf = PDF(fileName='document')
-        pdf.insertRow('Форма учета инвентаризационного оборудования', 'h1')
-        pdf.insertRow('от {0}'.format(datetime.datetime.now().strftime('%Y-%m-%d')), 'dt')
-        pdf.insertRow(self.object.organisation.title)
-        pdf.insertRow('{0} {1}'.format(self.object.get_position_display(), self.object.short_full_name()))
-        pdf.insertRow('Список оборудования:', 'h3')
-
-        columns = ('Инв. №', 'Серийный номер', 'Тип', 'Модель')
-        queryset = self.object.equipment_set.select_related('type')
-        set = [(e.inventory_number, e.serial_number, e.type.value, e.model) for e in queryset]
-
-        pdf.insertTable(columns=columns, queryset=set)
-        pdf.insertBreak()
-        pdf.insertRow('Всего по списку: {0} ед.'.format(len(set)))
-        pdf.insertRow(
-            '{0} _______________________________________________________ {1}'.
-            format(datetime.datetime.now().strftime('%Y.%m.%d'), self.object.short_full_name()),
-            'center',
-            lineBreak=False
-        )
-        pdf.insertRow('(подпись)', 'center_md')
-
+        pdf.generateEmployeeReport(self.object)
         return pdf.render()
