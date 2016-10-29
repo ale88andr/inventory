@@ -40,17 +40,19 @@
                 <p>{{ equipment.note }}</p>
             </div>
             <div class="equipment-footer">
-                <p class="text-muted">
-                    <i class="fa fa-user fa-fw"></i>
-                    Ответственный сотрудник:
-                    <b class="text-danger">
+                <p>
+                    <span class="text-muted">
+                        <i class="fa fa-user fa-fw"></i>
+                    </span>
+                    <b>
                         {{ equipment.responsible.full_name|default:'<span class="label label-danger">Нет</span>' }}
                     </b>
                 </p>
-                <p class="text-muted">
-                    <i class="fa fa-location-arrow fa-fw"></i>
-                    Месторасположение:
-                    <b class="text-danger">
+                <p>
+                    <span class="text-muted">
+                        <i class="fa fa-location-arrow fa-fw"></i>
+                    </span>
+                    <b>
                         {{ equipment.responsible.location_advise|default:'<span class="label label-warning">Не определенно</span>' }}
                     </b>
                 </p>

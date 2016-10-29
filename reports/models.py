@@ -456,7 +456,8 @@ class PDF:
         if inventory:
             self.insertRow('{0}'.format(inventory), self.inventory_lg, lineBreak=False)
 
-        self.insertRow('s/n {0}'.format(serial), self.serial_lg)
+        if serial:
+            self.insertRow('s/n {0}'.format(serial), self.serial_lg)
 
     def generateEmployeeReport(self, employeeObject):
         self.insertRow(employeeObject.organisation.title, self.blank_center)
@@ -485,6 +486,8 @@ class PDF:
             lineBreak=False
         )
         self.insertRow('(подпись)', self.blank_center)
+
+        self.render()
 
     def render(self):
         self.document.build(self.data)

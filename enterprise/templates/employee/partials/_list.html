@@ -46,7 +46,7 @@
                                         </a>
                                     </td>
                                     <td>{{ employee.get_position_display }}</td>
-                                    <td>{{ employee.department.title|default:'-----' }}</td>
+                                    <td>{{ employee.department.title|default:employee.organisation.short_title }}</td>
                                     <td>{{ employee.get_state_display }}</td>
                                     <td class="danger">
                                         {{ employee.location.emplacement }}
